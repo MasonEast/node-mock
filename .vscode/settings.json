@@ -1,0 +1,9 @@
+{
+    "sqltools.connections": [
+        {
+            "database": "mason",
+            "dialect": "SQLite",
+            "name": "mason"
+        }
+    ]
+}
