@@ -1,47 +1,87 @@
-// const Koa = require('koa')
-// const cors = require('koa-cors')
-// const bodyParser = require('koa-bodyparser')
-// const koaBody = require('koa-body');
-// const db = require('./db')
-// const router = require('./route')
-// const Koa_Session = require('koa-session');
-// const fs = require('fs')
+const Koa = require('koa')
+const next = require('next')
+const Router = require('koa-router')
+const { routePost, routeGet } = require('./route')
+const port = parseInt(process.env.PORT, 10) || 3000
+const dev = process.env.NODE_ENV !== 'production'
+const app = next({ dev })
+const handle = app.getRequestHandler()
+const bodyParser = require('koa-bodyparser')
 
-// const app = new Koa()
+const server = new Koa()
+const router = new Router()
 
-// try {
-//     fs.accessSync(`${process.cwd()}/mock_db/app.sqlite`, fs.F_OK)
-//     console.log('connecting the mock database')
-// } catch (e) {
-//     fs.mkdirSync('mock_db')
-// fs.copyFileSync(path.resolve(__dirname, `./db/app.sqlite`), `${process.cwd()}/mock_db/app.sqlite`, function (err) {
-//     if (err) {
-//         console.log('create mock database failed.')
-//     } else {
-//         console.log('create mock database successfully.')
-//     }
-// })
-// }
+server.use(bodyParser())
+//接口api
+router.post('/api/:page', async ctx => {
+    console.log(ctx.request.body)
+    const { name, url } = ctx.request.body
+    const query = { name, url }
+    await routePost({ params: ctx.params.page, query }).then(res => {
+        return ctx.body = {
+            msg: 'success',
+            data: res
+        }
+    })
+})
+router.get('/api/:page', async ctx => {
+    await routeGet({ params: ctx.params.page }).then(res => {
+        return ctx.body = {
+            msg: 'success',
+            data: res
+        }
+    })
+})
 
-//file:test.js
-var sqlite3 = require('sqlite3');
-var db = new sqlite3.Database('/tmp/1.db', function () {
-    db.run("create table test(name varchar(15))", function () {
-        db.run("insert into test values('hello,world')", function () {
-            db.all("select * from test", function (err, res) {
-                if (!err)
-                    console.log(JSON.stringify(res));
-                else
-                    console.log(err);
-            });
+//next页面
+app.prepare()
+    .then(() => {
+
+        // 首页
+        router.get('/', async ctx => {
+            await app.render(ctx.req, ctx.res, '/', ctx.query)
+            ctx.respond = false
         })
-    });
-});
+        // 关于
+        router.get('/about', async ctx => {
+            await app.render(ctx.req, ctx.res, '/about', ctx.query)
+            ctx.respond = false
+        })
+        // 产品
+        router.get('/products/:id', async ctx => {
+            const { id } = ctx.params
+            await app.render(ctx.req, ctx.res, `/products/${id}`, ctx.query)
+            ctx.respond = false
+        })
+        // 案例
+        router.get('/case', async ctx => {
+            await app.render(ctx.req, ctx.res, '/case', ctx.query)
+            ctx.respond = false
+        })
+        // 联系我们
+        router.get('/contact', async ctx => {
+            await app.render(ctx.req, ctx.res, '/contact', ctx.query)
+            ctx.respond = false
+        })
+        // 详情
+        router.get('/view/:type/:id', async ctx => {
+            const { id, type } = ctx.params
+            await app.render(ctx.req, ctx.res, `/view`, { id, type })
+            ctx.respond = false
+        })
+        // 如果没有配置nginx做静态文件服务，下面代码请务必开启
+        router.get('*', async ctx => {
+            await handle(ctx.req, ctx.res)
+            ctx.respond = false
+        })
+        // 防止出现控制台报404错误
+        server.use(async (ctx, next) => {
+            ctx.res.statusCode = 200
+            await next()
+        })
+        server.use(router.routes()).use(router.allowedMethods())
+        server.listen(port, () => {
+            console.log(`> Ready on http://localhost:${port}`)
+        })
+    })
 
-//解除跨域限制， 这里用于demo， 这样做是不安全的
-// app.use(cors({
-//     origin: '*'
-// }))
-
-// //解析post请求的中间件
-// app.use(bodyParser());

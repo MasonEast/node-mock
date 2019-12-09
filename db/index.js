@@ -12,7 +12,7 @@ const sequelizeConfig = {
 const db = new Sequelize(sequelizeConfig.database, sequelizeConfig.user, sequelizeConfig.password, {
     dialect: 'sqlite',
     sync: { force: true },
-    storage: path.resolve(__dirname, './', 'db/app.sqlite')
+    storage: path.resolve(__dirname, '../', 'database.sqlite')
 })
 
 
