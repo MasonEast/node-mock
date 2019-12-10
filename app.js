@@ -1,7 +1,7 @@
 const Koa = require('koa')
 const next = require('next')
 const Router = require('koa-router')
-const { routePost, routeGet } = require('./route')
+const { routePost, routeGet, routeMock } = require('./route')
 const port = parseInt(process.env.PORT, 10) || 3000
 const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
@@ -12,7 +12,7 @@ const server = new Koa()
 const router = new Router()
 
 server.use(bodyParser())
-//接口api
+//next页面api接口
 router.post('/api/:page', async ctx => {
     console.log(ctx.request.body)
     const { name, url } = ctx.request.body
@@ -33,7 +33,19 @@ router.get('/api/:page', async ctx => {
     })
 })
 
-//next页面
+//mock数据接口
+router.all('/mock/:url', async ctx => {
+    const { method, body } = ctx.request
+    console.log(method, body)
+    await routeMock({ params: ctx.params.url, body, method }).then(res => {
+        return ctx.body = {
+            msg: 'success',
+            data: res
+        }
+    })
+})
+
+//next页面接口
 app.prepare()
     .then(() => {
 
@@ -47,10 +59,9 @@ app.prepare()
             await app.render(ctx.req, ctx.res, '/about', ctx.query)
             ctx.respond = false
         })
-        // 产品
-        router.get('/products/:id', async ctx => {
-            const { id } = ctx.params
-            await app.render(ctx.req, ctx.res, `/products/${id}`, ctx.query)
+        // 项目
+        router.get('/project', async ctx => {
+            await app.render(ctx.req, ctx.res, `/project`, ctx.query)
             ctx.respond = false
         })
         // 案例

@@ -38,28 +38,98 @@ var Api = db.define('apis', {
         defaultValue: 'get',
         allowNull: true
     },
+    data: {
+        type: Sequelize.JSON,
+        defaultValue: '',
+        allowNull: true
+    },
     state: {
         type: Sequelize.INTEGER,
         allowNull: true
     }
 });
 
-function add ({ name, url }) {
-    Api.create({
-        name,
-        url,
+function addApi (api) {
+    return Api.create({
+        name: api.name,
+        desc: api.desc,
+        content: api.content,
+        project_id: api.projectId,
+        url: api.url,
+        state: 1
     })
 }
 
-Api.sync({ force: true }).then(() => Api.create({
-    name: 'mason',
-    project_id: 'example',
-    url: 'www.xxx.com'
-}))
-
-module.exports = {
-    add
+function selectOneApi (id) {
+    return Api.findOne({
+        where: {
+            id: id,
+            state: 1
+        },
+        raw: true
+    })
 }
 
-// 如果在TeacherEssay.sync()中写入force：true，
-// 那么将在重新创建数据库之前删除原来的数据库
+function findOneApiByUrl (name) {
+    return Api.findOne({
+        where: {
+            url: name,
+            state: 1
+        },
+        raw: true
+    })
+}
+
+function selectAllApi (id) {
+    return Api.findAll({
+        where: {
+            project_id: id,
+            state: 1
+        },
+        raw: true
+    })
+}
+
+function selectApiByCondiction (condiction) {
+    return Api.findAll({
+        where: condiction,
+        raw: true
+    })
+}
+
+function deleteApi (id) {
+    return Api.update({
+        state: 0
+    }, {
+            where: { id: id }
+        })
+    // return Api.destroy({
+    //   where: { id: id }
+    // })
+}
+
+function deleteProjectApi (projectId) {
+    return Api.update({
+        state: 0
+    }, {
+            where: { project_id: projectId }
+        })
+    // return Api.destroy({
+    //   where: { project_id: projectId }
+    // })
+}
+
+function updateApi (content, condition) {
+    return Api.update(content, condition)
+}
+
+module.exports = {
+    addApi,
+    selectAllApi,
+    selectOneApi,
+    deleteApi,
+    updateApi,
+    deleteProjectApi,
+    selectApiByCondiction,
+    findOneApiByUrl
+}

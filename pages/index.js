@@ -1,55 +1,132 @@
 
 import Link from 'next/link'
-import { Button } from 'antd'
-// import Layout from '../components/layout';
+import Router, { withRouter } from 'next/router'
+import { Button, Modal, Form, Icon, Input } from 'antd'
+import Card from '../components/card';
 import 'antd/dist/antd.css'
-import axios from 'axios'
-import Qs from 'qs'
+import { requestGet, requestPost } from '../utils/request'
+import { useState } from 'react'
 
-const Home = ({ }) => {
+const Home = ({ res, form }) => {
+    const [flag, setFlag] = useState(false)
+    console.log(res, form)
+    const handleOk = e => {
+        console.log(e);
+        setFlag(false)
+    };
+
+    const handleCancel = e => {
+        console.log(e);
+        setFlag(false)
+    };
+
+    const handleSubmit = e => {
+        e.preventDefault();
+        form.validateFields(async (err, values) => {
+            if (!err) {
+                console.log('Received values of form: ', values);
+                await requestPost({ url: 'http://localhost:3000/api/addProject', body: values })
+                await Home.getInitialProps()
+
+                setFlag(false)
+            }
+        });
+    };
+    const { getFieldDecorator } = form;
+
     const handleAdd = async () => {
-        // const res = await axios({
-        //     method: 'post',
-        //     headers: {
-        //         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-        //     },
-        //     url: 'http://127.0.0.1:3000/api/add',
-        //     body: Qs.stringify({
-        //         name: 'mason',
-        //         url: '111'
-        //     })
-        // })
-        const res = await axios({
-            method: 'get',
-            url: 'http://127.0.0.1:3000/api/project',
-        })
-        console.log(res)
+        setFlag(true)
     }
+
+    const goDetail = () => {
+        Router.push('/project')
+    }
+
     return (
 
-        <div>
-            <Link href="/about">
-                <Button onClick={handleAdd}>添加项目</Button>
-            </Link>
-            <content>
-                111
+        <div className="home-box">
+            <Button style={{ width: '100%', height: '50px', marginBottom: '50px' }} onClick={handleAdd}>添加项目</Button>
+            <content className="home-content">
+                {
+                    res.map(item => (
+                        <Card
+                            projectName={item.name}
+                            url={item.url}
+                            goDetail={goDetail}
+                        />
+                    ))
+                }
+                <div className="empty-item"></div>
+                <div className="empty-item"></div>
+                <div className="empty-item"></div>
             </content>
+            <Modal
+                title="新增项目"
+                visible={flag}
+                onOk={handleOk}
+                onCancel={handleCancel}
+                footer={null}
+            >
+                <Form onSubmit={handleSubmit} className="login-form">
+                    <Form.Item>
+                        {getFieldDecorator('name', {
+                            rules: [{ required: true, message: '项目名称不能为空!' }],
+                        })(
+                            <Input
+                                placeholder="项目名称"
+                            />,
+                        )}
+                    </Form.Item>
+                    <Form.Item>
+                        {getFieldDecorator('url', {
+                            rules: [{ required: true, message: '项目url不能为空!' }],
+                        })(
+                            <Input
+                                placeholder="项目url"
+                            />,
+                        )}
+                    </Form.Item>
+                    <Form.Item>
+                        {getFieldDecorator('desc')(
+                            <Input
+                                placeholder="项目描述"
+                            />,
+                        )}
+                    </Form.Item>
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit" className="login-form-button">
+                            创建项目
+                        </Button>
+                    </Form.Item>
+                </Form>
+            </Modal>
+            <style jsx>
+                {`
+                    .home-box{
+                        width: 100%;
+                        height: 100%;
+                        box-sizing: boder-box;
+                        padding: 50px;
+                    }
+                    .home-content{
+                        display: flex;
+                        justify-content: space-between;
+                        flex-wrap: wrap
+                    }
+                `}
+            </style>
         </div>
     )
 }
 
-// Home.getInitialProps = async ({ req }) => {
-//     const res = await axios({
-//         method: 'post',
-//         url: 'localhost:3000/api/add',
-//         body: {
-//             name: 'mason',
-//             url: '111'
-//         }
-//     })
-//     console.log(res)
-//     // const json = res
-//     // return { stars: json.stargazers_count }
-// }
+Home.getInitialProps = async () => {
+    let result = await requestGet({ url: 'http://localhost:3000/api/project' })
+    console.log(result.data)
+    return { res: result.data.data }
+}
 
-export default Home
+const WrappedHome = Form.create({ name: 'project_create' })(Home);
+
+
+export default withRouter(WrappedHome)
+
