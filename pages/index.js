@@ -10,6 +10,7 @@ import { useState } from 'react'
 const Home = ({ res, form }) => {
     const [flag, setFlag] = useState(false)
     console.log(res, form)
+    const [list, setList] = useState(res)
     const handleOk = e => {
         console.log(e);
         setFlag(false)
@@ -26,8 +27,9 @@ const Home = ({ res, form }) => {
             if (!err) {
                 console.log('Received values of form: ', values);
                 await requestPost({ url: 'http://localhost:3000/api/addProject', body: values })
-                await Home.getInitialProps()
-
+                let result = await Home.getInitialProps()
+                console.log(result)
+                setList(result.res)
                 setFlag(false)
             }
         });
@@ -48,7 +50,7 @@ const Home = ({ res, form }) => {
             <Button style={{ width: '100%', height: '50px', marginBottom: '50px' }} onClick={handleAdd}>添加项目</Button>
             <content className="home-content">
                 {
-                    res.map(item => (
+                    list.map(item => (
                         <Card
                             projectName={item.name}
                             url={item.url}
