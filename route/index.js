@@ -42,8 +42,7 @@ module.exports = {
     },
 
     routeMock: async ({ params, body = {}, method = 'get' }) => {
-        console.log(params[0], body, method)
-        let res = await api.findOneApiByUrl({ url: params[0], project_id: params.url, method })
+        let res = await api.findOneApiByUrl({ url: params[0], project_id: params.project_id, method })
         return res.data
     },
 }
