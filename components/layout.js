@@ -7,7 +7,8 @@ export default ({ children }) => (
         <Head>
             <meta name='viewport' content='width=device-width, initial-scale=1' />
             <meta charSet='utf-8' />
-            <title>Next-Antd-Scafflod</title>
+            <link />
+            <title>Node-Mock</title>
         </Head>
         <style jsx global>{`
       body {

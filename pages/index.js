@@ -7,10 +7,12 @@ import 'antd/dist/antd.css'
 import { requestGet, requestPost } from '../utils/request'
 import { useState } from 'react'
 
-const Home = ({ res, form }) => {
+const Home = ({ res = [], form }) => {
     const [flag, setFlag] = useState(false)
     console.log(res, form)
     const [list, setList] = useState(res)
+    const { getFieldDecorator } = form;
+
     const handleOk = e => {
         console.log(e);
         setFlag(false)
@@ -34,14 +36,16 @@ const Home = ({ res, form }) => {
             }
         });
     };
-    const { getFieldDecorator } = form;
 
     const handleAdd = async () => {
         setFlag(true)
     }
 
-    const goDetail = () => {
-        Router.push('/project')
+    const goDetail = (id) => {
+        Router.push({
+            pathname: '/project',
+            query: { id }
+        })
     }
 
     return (
@@ -54,7 +58,8 @@ const Home = ({ res, form }) => {
                         <Card
                             projectName={item.name}
                             url={item.url}
-                            goDetail={goDetail}
+                            id={item.id}
+                            goDetail={() => goDetail(item.id)}
                         />
                     ))
                 }
@@ -114,6 +119,9 @@ const Home = ({ res, form }) => {
                         display: flex;
                         justify-content: space-between;
                         flex-wrap: wrap
+                    }
+                    .empty-item{
+                        width: 30%;
                     }
                 `}
             </style>

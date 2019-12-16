@@ -50,12 +50,16 @@ var Api = db.define('apis', {
 });
 
 function addApi (api) {
+    const { project_id, name, url, desc, head, method, body, data } = api
     return Api.create({
-        name: api.name,
-        desc: api.desc,
-        content: api.content,
-        project_id: api.projectId,
-        url: api.url,
+        project_id,
+        name,
+        url,
+        desc,
+        head,
+        method,
+        body,
+        data,
         state: 1
     })
 }
@@ -70,10 +74,12 @@ function selectOneApi (id) {
     })
 }
 
-function findOneApiByUrl (name) {
+function findOneApiByUrl ({ url, project_id, method = 'get' }) {
     return Api.findOne({
         where: {
-            url: name,
+            url,
+            project_id,
+            method: method.toLowerCase(),
             state: 1
         },
         raw: true

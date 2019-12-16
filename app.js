@@ -15,9 +15,9 @@ server.use(bodyParser())
 //next页面api接口
 router.post('/api/:page', async ctx => {
     console.log(ctx.request.body)
-    const { name, url } = ctx.request.body
-    const query = { name, url }
-    await routePost({ params: ctx.params.page, query }).then(res => {
+    // const { name, url } = ctx.request.body
+    // const query = { name, url }
+    await routePost({ params: ctx.params.page, query: ctx.request.body }).then(res => {
         return ctx.body = {
             msg: 'success',
             data: res
@@ -34,10 +34,11 @@ router.get('/api/:page', async ctx => {
 })
 
 //mock数据接口
-router.all('/mock/:url', async ctx => {
+router.all('/mock/:url/*', async ctx => {
     const { method, body } = ctx.request
     console.log(method, body)
-    await routeMock({ params: ctx.params.url, body, method }).then(res => {
+    await routeMock({ params: ctx.params, body, method }).then(res => {
+        console.log(222, res)
         return ctx.body = {
             msg: 'success',
             data: res

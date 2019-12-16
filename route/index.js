@@ -4,17 +4,17 @@ const request = require('request');
 
 module.exports = {
     routePost: async ({ params, query }) => {
-        const { name, url } = query
+        const { id, name, url, desc, head, method, body, data } = query
         let res = {}
         switch (params) {
             case 'home':
                 return res
             case 'addProject':
-                console.log(name, url)
-                // if(await project.selectOne({name})){
-                //     return
-                // }
-                return await project.add({ name, url })
+                return await project.add({ name, url, desc })
+            case 'addInterface':
+                return await api.addApi({ project_id: id, name, url, desc, head, method, body, data })
+            case 'getInterface':
+                return await api.selectAllApi(id)
             case 'mockrequest':
                 apis.selectOne({ id }).then(res => {
                     const { url, method, body, headers } = res
@@ -42,20 +42,9 @@ module.exports = {
     },
 
     routeMock: async ({ params, body = {}, method = 'get' }) => {
-        console.log(params, body, method)
-        api.selectOne({ url: body.url }).then(res => {
-            console.log(111, res)
-            const { url, method, body, headers } = res
-            request({
-                method,
-                url,
-                headers,
-                body
-            }, (error, response, body) => {
-                if (error) throw error
-                return body
-            })
-        })
+        console.log(params[0], body, method)
+        let res = await api.findOneApiByUrl({ url: params[0], project_id: params.url, method })
+        return res.data
     },
 }
 
