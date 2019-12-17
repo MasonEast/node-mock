@@ -19,10 +19,7 @@ class EditableCell extends React.Component {
         editing: false,
     };
 
-    toggleEdit = (e) => {
-        // e.persist()
-        // console.log(e.currentTarget())
-        // console.dir(e.currentTarget)
+    toggleEdit = () => {
         const editing = !this.state.editing;
         this.setState({ editing }, () => {
             if (editing) {
@@ -44,17 +41,14 @@ class EditableCell extends React.Component {
 
     renderCell = form => {
         this.form = form;
-        const { children, dataIndex, record, title } = this.props;
+        const { children, dataIndex, record, options } = this.props;
+        console.log(options)
         const { editing } = this.state;
         return editing ? (
             <Form.Item style={{ margin: 0 }}>
                 {form.getFieldDecorator(dataIndex, {
-                    // initialValue: '111',
                 })(<Select style={{ width: '240px' }} ref={node => (this.input = node)} onPressEnter={this.save} onBlur={this.save}>
-                    <Option value="application/x-www-form-urlencoded">application/x-www-form-urlencoded</Option>
-                    <Option value="multipart/form-data">multipart/form-data</Option>
-                    <Option value="application/json">application/json</Option>
-                    <Option value="text/html">text/html</Option>
+                    {options.map(item => <Option key={item} value={item}>{item}</Option>)}
                 </Select>)}
             </Form.Item>
         ) : (
@@ -101,7 +95,7 @@ const HeadersTable = (props) => {
         }
     ])
     const AppContext = useContext(Context)
-
+    const [options, setOptions] = useState([])
 
     let columns = [
         {
@@ -171,12 +165,20 @@ const HeadersTable = (props) => {
         }
         return {
             ...col,
-            onCell: record => ({
+            onCell: (record, rowIndex) => ({
                 record,
                 editable: col.editable,
                 dataIndex: col.dataIndex,
                 title: col.title,
                 handleSave: handleSave,
+                options,
+                onClick: () => {
+                    if (col.title === 'Key') {
+                        setOptions(['contentType'])
+                    } else {
+                        setOptions(['application/x-www-form-urlencoded', 'multipart/form-data', 'application/json', 'text/html'])
+                    }
+                }
             }),
         };
     });
@@ -193,13 +195,7 @@ const HeadersTable = (props) => {
                 dataSource={dataSource}
                 columns={columns}
                 pagination={false}
-                onCell={(record) => {
-                    return {
-                        onClick: (e) => {
-                            console.log(record, e)
-                        }
-                    }
-                }}
+
             />
         </div>
     );

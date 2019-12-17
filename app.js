@@ -12,15 +12,15 @@ const koaBody = require("koa-body");
 const server = new Koa()
 const router = new Router()
 
-server.use(bodyParser())
+// server.use(bodyParser())
 
-// server.use(koaBody({
-//     multipart: true,
-//     strict: false,                           //设为false, 为了方便接受delete请求
-//     formidable: {
-//         maxFileSize: 200 * 1024 * 1024
-//     }
-// }))
+server.use(koaBody({
+    multipart: true,
+    strict: false,                           //设为false, 为了方便接受delete请求
+    formidable: {
+        maxFileSize: 200 * 1024 * 1024
+    }
+}))
 
 //next页面api接口
 router.post('/api/:page', async ctx => {
@@ -51,7 +51,6 @@ router.delete('/api/:page', async ctx => {
 
 //mock数据接口
 router.all('/mock/:project_id/*', async ctx => {
-    console.log(ctx.request)
     const { method, body, url, header } = ctx.request
     await routeMock({ params: ctx.params, body, method, url, header }).then(res => {
         return ctx.body = {

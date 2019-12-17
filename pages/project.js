@@ -65,9 +65,9 @@ const Project = ({ router, res, form }) => {
             dataIndex: 'method'
         },
         {
-            title: 'Head',
-            key: 'head',
-            dataIndex: 'head'
+            title: 'Headers',
+            key: 'headers',
+            dataIndex: 'headers'
         },
         {
             title: 'Body',
@@ -98,10 +98,12 @@ const Project = ({ router, res, form }) => {
         form.validateFields(async (err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values, state);
+                values.url.charAt(0) === '/' && (values.url = values.url.substr(1))
                 values.id = router.query.id
                 values.body = state.body
                 values.headers = state.headers
                 values.bodyType = state.bodyType
+                values.data = state.data
                 await requestPost({ url: addInterfaceURL, body: values })
                 let result = await requestPost({ url: getInterfaceURL, body: { id: router.query.id } })
                 setList(result.data.data)
@@ -188,6 +190,21 @@ const Project = ({ router, res, form }) => {
                     .project-newInterface-form{
                         margin: 30px;
                     }
+                    .editable-cell {
+                        position: relative;
+                      }
+                      
+                      .editable-cell-value-wrap {
+                        padding: 10px 12px;
+                        cursor: pointer;
+                      }
+                      
+                      .editable-row:hover .editable-cell-value-wrap {
+                        border: 1px solid #d9d9d9;
+                        border-radius: 4px;
+                        padding: 9px 11px;
+                      }
+                    
                 `}
                 </style>
 
