@@ -5,12 +5,11 @@ import Router, { withRouter } from 'next/router'
 import 'antd/dist/antd.css'
 import URL from '../config/url'
 import InterfaceTabs from '../components/tabs'
-import { createContext, useReducer, useState, useContext } from 'react'
+import { createContext, useReducer, useState } from 'react'
 
 export const Context = createContext(null)
 
 const { getInterfaceURL, addInterfaceURL, deleteInterfaceURL } = URL
-const { Option } = Select
 
 const reducer = (state, action) => {
     switch (action.type) {
@@ -20,7 +19,16 @@ const reducer = (state, action) => {
                 headers[item['Key']] = item['Value']
             })
             console.log(headers)
-            return { ...state, headers };
+            return { ...state, headers }
+        case 'ADD_BODY':
+            let body = {}
+            action.data.forEach(item => {
+                body[item['Key']] = item['Value']
+            })
+            console.log(body)
+            return { ...state, body, bodyType: action.dataType };
+        case 'ADD_DATA':
+            return { ...state, data: action.data, };
         default:
             throw new Error();
     }
@@ -91,18 +99,15 @@ const Project = ({ router, res, form }) => {
             if (!err) {
                 console.log('Received values of form: ', values, state);
                 values.id = router.query.id
+                values.body = state.body
+                values.headers = state.headers
+                values.bodyType = state.bodyType
                 await requestPost({ url: addInterfaceURL, body: values })
                 let result = await requestPost({ url: getInterfaceURL, body: { id: router.query.id } })
-
-                console.log(result)
                 setList(result.data.data)
             }
         });
     };
-
-    const handleChange = (e) => {
-        console.log(e)
-    }
 
     const handleDelete = async (record) => {
         await requestPost({ url: deleteInterfaceURL, body: { id: record.id }, method: 'delete' })
@@ -164,25 +169,11 @@ const Project = ({ router, res, form }) => {
                             />,
                         )}
                     </Form.Item>
-                    {/* <Form.Item label="body">
-                        {getFieldDecorator('body')(
-                            <Input.TextArea style={{ width: '80vw', height: '20vh' }}
-                                placeholder="请求体"
-                            />,
-                        )}
-                    </Form.Item>
-                    <Form.Item label="data">
-                        {getFieldDecorator('data')(
-                            <Input.TextArea style={{ width: '80vw', height: '20vh' }}
-                                placeholder="接口返回值"
-                            />,
-                        )}
-                    </Form.Item> */}
                 </Form>
 
                 <InterfaceTabs />
                 <h3>接口列表</h3>
-                <Table columns={columns} dataSource={list} />
+                <Table rowKey={record => record.id} columns={columns} dataSource={list} />
                 <style jsx>
                     {`
                     .project-box{

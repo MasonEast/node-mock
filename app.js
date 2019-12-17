@@ -51,8 +51,9 @@ router.delete('/api/:page', async ctx => {
 
 //mock数据接口
 router.all('/mock/:project_id/*', async ctx => {
-    const { method, body } = ctx.request
-    await routeMock({ params: ctx.params, body, method }).then(res => {
+    console.log(ctx.request)
+    const { method, body, url, header } = ctx.request
+    await routeMock({ params: ctx.params, body, method, url, header }).then(res => {
         return ctx.body = {
             msg: 'success',
             data: JSON.parse(res)

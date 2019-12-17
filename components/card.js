@@ -5,7 +5,7 @@ import Link from 'next/link'
 const CardItem = (props) => {
 
 
-    const { id, projectName, text, url, moveCard, deleteProject, goDetail } = props
+    const { id, projectName, desc, url, moveCard, deleteProject, goDetail } = props
     const ref = useRef(null)
 
     return (
@@ -23,7 +23,7 @@ const CardItem = (props) => {
                     // <Link key="copy" href={url}><span ><Icon style={{ fontSize: 18 }} title="复制" type="copy" /></span></Link>,
                 ]}
             >
-                {text}
+                {desc}
             </Card>
             <style jsx>
                 {`

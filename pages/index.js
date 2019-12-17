@@ -70,6 +70,7 @@ const Home = ({ res = [], form }) => {
                             key={item.id}
                             deleteProject={deleteProject}
                             goDetail={goDetail}
+                            desc={item.desc}
                         />
                     ))
                 }

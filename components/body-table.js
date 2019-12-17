@@ -1,4 +1,4 @@
-import { Table, Input, Select, Button, Popconfirm, Form } from 'antd';
+import { Table, Input, Radio, Select, Button, Popconfirm, Form } from 'antd';
 import React, { useState, useContext } from 'react'
 import './headers-table.css'
 import { Context } from '../pages/project'
@@ -19,10 +19,7 @@ class EditableCell extends React.Component {
         editing: false,
     };
 
-    toggleEdit = (e) => {
-        // e.persist()
-        // console.log(e.currentTarget())
-        // console.dir(e.currentTarget)
+    toggleEdit = () => {
         const editing = !this.state.editing;
         this.setState({ editing }, () => {
             if (editing) {
@@ -49,19 +46,16 @@ class EditableCell extends React.Component {
         return editing ? (
             <Form.Item style={{ margin: 0 }}>
                 {form.getFieldDecorator(dataIndex, {
-                    // initialValue: '111',
-                })(<Select style={{ width: '240px' }} ref={node => (this.input = node)} onPressEnter={this.save} onBlur={this.save}>
-                    <Option value="application/x-www-form-urlencoded">application/x-www-form-urlencoded</Option>
-                    <Option value="multipart/form-data">multipart/form-data</Option>
-                    <Option value="application/json">application/json</Option>
-                    <Option value="text/html">text/html</Option>
-                </Select>)}
+                    initialValue: record[dataIndex],
+                })(<Input style={{ width: '240px' }} ref={node => (this.input = node)} onPressEnter={this.save} onBlur={this.save}>
+
+                </Input>)}
             </Form.Item>
         ) : (
                 <div
                     className="editable-cell-value-wrap"
                     style={{ paddingRight: 24 }}
-                    onClick={e => this.toggleEdit(e)}
+                    onClick={this.toggleEdit}
                 >
                     {children}
                 </div>
@@ -91,7 +85,7 @@ class EditableCell extends React.Component {
     }
 }
 
-const HeadersTable = (props) => {
+const BodyTable = (props) => {
 
     const [dataSource, setDataSource] = useState([
         {
@@ -100,8 +94,9 @@ const HeadersTable = (props) => {
             Value: '',
         }
     ])
+    const [radioValue, setRadioValue] = useState('none')
+    
     const AppContext = useContext(Context)
-
 
     let columns = [
         {
@@ -154,7 +149,7 @@ const HeadersTable = (props) => {
             ...row,
         });
         setDataSource(() => newData)
-        AppContext.dispatch({ type: 'ADD_HEADERS', data: newData })
+        AppContext.dispatch({ type: 'ADD_BODY', data: newData, dataType: radioValue })
     };
 
 
@@ -183,9 +178,22 @@ const HeadersTable = (props) => {
 
     return (
         <div>
-            <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }}>
-                Add a row
-            </Button>
+            <header>
+                <Button onClick={handleAdd} type="primary" style={{ margin: '0 16px 16px 0' }}>
+                    Add a row
+                </Button>
+                <Radio.Group onChange={(e) => {
+                    // e.persist()
+                    console.log(e.target)
+                    setRadioValue(e.target.value)
+                }}
+                    value={radioValue}
+                >
+                    <Radio value={'form-data'}>form-data</Radio>
+                    <Radio value={'x-www-form-urlencoded'}>x-www-form-urlencoded</Radio>
+                    <Radio value={'raw'}>raw</Radio>
+                </Radio.Group>
+            </header>
             <Table
                 components={components}
                 rowClassName={() => 'editable-row'}
@@ -193,18 +201,11 @@ const HeadersTable = (props) => {
                 dataSource={dataSource}
                 columns={columns}
                 pagination={false}
-                onCell={(record) => {
-                    return {
-                        onClick: (e) => {
-                            console.log(record, e)
-                        }
-                    }
-                }}
             />
         </div>
     );
 
 }
 
-export default HeadersTable
+export default BodyTable
 

@@ -4,30 +4,14 @@ const request = require('request');
 
 module.exports = {
     routePost: async ({ params, query }) => {
-        const { id, name, url, desc, user_id, head, method, body, data } = query
-        let res = {}
+        const { id, name, url, desc, user_id, headers, method, body, data } = query
         switch (params) {
-            case 'home':
-                return res
             case 'addProject':
                 return await project.add({ name, url, desc, user_id })
             case 'addInterface':
-                return await api.addApi({ project_id: id, name, url, desc, head, method, body, data })
+                return await api.addApi({ project_id: id, name, url, desc, headers, method, body, data })
             case 'getInterface':
                 return await api.selectAllApi(id)
-            case 'mockrequest':
-                apis.selectOne({ id }).then(res => {
-                    const { url, method, body, headers } = res
-                    request({
-                        method,
-                        url,
-                        headers,
-                        body
-                    }, (error, response, body) => {
-                        if (error) throw error
-                        return body
-                    })
-                })
         }
     },
 
@@ -50,8 +34,8 @@ module.exports = {
         }
     },
 
-    routeMock: async ({ params, body = {}, method = 'get' }) => {
-        let res = await api.findOneApiByUrl({ url: params[0], project_id: params.project_id, method })
+    routeMock: async ({ params, body = {}, url, header, method = 'get' }) => {
+        let res = await api.findOneApiByUrl({ url: params[0], project_id: params.project_id, method, header })
         return res.data
     },
 }

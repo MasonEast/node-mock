@@ -49,13 +49,13 @@ var Api = db.define('apis', {
 });
 
 function addApi (api) {
-    const { project_id, name, url, desc, head, method, body, data } = api
+    const { project_id, name, url, desc, headers, method, body, data } = api
     return Api.create({
         project_id,
         name,
         url,
         desc,
-        headers: head,
+        headers,
         method,
         body,
         data,
