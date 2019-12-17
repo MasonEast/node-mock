@@ -1,17 +1,27 @@
 const Koa = require('koa')
 const next = require('next')
 const Router = require('koa-router')
-const { routePost, routeGet, routeMock } = require('./route')
+const { routePost, routeGet, routeDelete, routeMock } = require('./route')
 const port = parseInt(process.env.PORT, 10) || 3000
 const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
 const handle = app.getRequestHandler()
 const bodyParser = require('koa-bodyparser')
+const koaBody = require("koa-body");
 
 const server = new Koa()
 const router = new Router()
 
 server.use(bodyParser())
+
+// server.use(koaBody({
+//     multipart: true,
+//     strict: false,                           //设为false, 为了方便接受delete请求
+//     formidable: {
+//         maxFileSize: 200 * 1024 * 1024
+//     }
+// }))
+
 //next页面api接口
 router.post('/api/:page', async ctx => {
     await routePost({ params: ctx.params.page, query: ctx.request.body }).then(res => {
@@ -23,6 +33,15 @@ router.post('/api/:page', async ctx => {
 })
 router.get('/api/:page', async ctx => {
     await routeGet({ params: ctx.params.page }).then(res => {
+        return ctx.body = {
+            msg: 'success',
+            data: res
+        }
+    })
+})
+
+router.delete('/api/:page', async ctx => {
+    await routeDelete({ params: ctx.params.page, query: ctx.request.body }).then(res => {
         return ctx.body = {
             msg: 'success',
             data: res
@@ -50,32 +69,12 @@ app.prepare()
             await app.render(ctx.req, ctx.res, '/', ctx.query)
             ctx.respond = false
         })
-        // 关于
-        router.get('/about', async ctx => {
-            await app.render(ctx.req, ctx.res, '/about', ctx.query)
-            ctx.respond = false
-        })
         // 项目
         router.get('/project', async ctx => {
             await app.render(ctx.req, ctx.res, `/project`, ctx.query)
             ctx.respond = false
         })
-        // 案例
-        router.get('/case', async ctx => {
-            await app.render(ctx.req, ctx.res, '/case', ctx.query)
-            ctx.respond = false
-        })
-        // 联系我们
-        router.get('/contact', async ctx => {
-            await app.render(ctx.req, ctx.res, '/contact', ctx.query)
-            ctx.respond = false
-        })
-        // 详情
-        router.get('/view/:type/:id', async ctx => {
-            const { id, type } = ctx.params
-            await app.render(ctx.req, ctx.res, `/view`, { id, type })
-            ctx.respond = false
-        })
+
         // 如果没有配置nginx做静态文件服务，下面代码请务必开启
         router.get('*', async ctx => {
             await handle(ctx.req, ctx.res)

@@ -103,26 +103,18 @@ function selectApiByCondiction (condiction) {
     })
 }
 
-function deleteApi (id) {
-    return Api.update({
-        state: 0
-    }, {
-            where: { id: id }
-        })
-    // return Api.destroy({
-    //   where: { id: id }
-    // })
+function deleteApi (project_id) {
+
+    return Api.destroy({
+        where: { project_id }
+    })
 }
 
-function deleteProjectApi (projectId) {
-    return Api.update({
-        state: 0
-    }, {
-            where: { project_id: projectId }
-        })
-    // return Api.destroy({
-    //   where: { project_id: projectId }
-    // })
+function deleteOneApi (id) {
+
+    return Api.destroy({
+        where: { id }
+    })
 }
 
 function updateApi (content, condition) {
@@ -135,7 +127,7 @@ module.exports = {
     selectOneApi,
     deleteApi,
     updateApi,
-    deleteProjectApi,
+    deleteOneApi,
     selectApiByCondiction,
     findOneApiByUrl
 }

@@ -5,55 +5,6 @@ import Router, { withRouter } from 'next/router'
 import 'antd/dist/antd.css'
 import { useEffect, useState } from 'react'
 
-const columns = [
-    {
-        title: 'Name',
-        dataIndex: 'name',
-        key: 'name',
-        render: text => <a>{text}</a>,
-    },
-    {
-        title: 'Url',
-        dataIndex: 'url',
-        key: 'url',
-    },
-    {
-        title: 'Desc',
-        dataIndex: 'desc',
-        key: 'desc',
-    },
-    {
-        title: 'Method',
-        key: 'method',
-        dataIndex: 'method'
-    },
-    {
-        title: 'Header',
-        key: 'header',
-        dataIndex: 'header'
-    },
-    {
-        title: 'Body',
-        key: 'body',
-        dataIndex: 'body'
-    },
-    {
-        title: 'Data',
-        key: 'data',
-        dataIndex: 'data'
-    },
-    {
-        title: 'Action',
-        key: 'action',
-        render: (text, record) => (
-            <span>
-                <a>Invite {record.name}</a>
-                <Divider type="vertical" />
-                <a>Delete</a>
-            </span>
-        ),
-    },
-];
 
 
 const Project = ({ router, res, form }) => {
@@ -61,12 +12,60 @@ const Project = ({ router, res, form }) => {
     const { getFieldDecorator } = form;
     const [list, setList] = useState(res)
 
+    const columns = [
+        {
+            title: 'Name',
+            dataIndex: 'name',
+            key: 'name',
+            render: text => <a>{text}</a>,
+        },
+        {
+            title: 'Url',
+            dataIndex: 'url',
+            key: 'url',
+        },
+        {
+            title: 'Desc',
+            dataIndex: 'desc',
+            key: 'desc',
+        },
+        {
+            title: 'Method',
+            key: 'method',
+            dataIndex: 'method'
+        },
+        {
+            title: 'Header',
+            key: 'header',
+            dataIndex: 'header'
+        },
+        {
+            title: 'Body',
+            key: 'body',
+            dataIndex: 'body'
+        },
+        {
+            title: 'Data',
+            key: 'data',
+            dataIndex: 'data'
+        },
+        {
+            title: 'Action',
+            key: 'action',
+            render: (text, record) => (
+                <span>
+                    {/* <a>Invite {record.name}</a>
+                    <Divider type="vertical" /> */}
+                    <a onClick={() => { handleDelete(record) }}>Delete</a>
+                </span>
+            ),
+        },
+    ];
 
     const handleSubmit = e => {
         e.preventDefault();
         form.validateFields(async (err, values) => {
             if (!err) {
-                console.log()
                 console.log('Received values of form: ', values);
                 values.id = router.query.id
                 await requestPost({ url: 'http://localhost:3000/api/addInterface', body: values })
@@ -78,14 +77,24 @@ const Project = ({ router, res, form }) => {
         });
     };
 
+    const handleDelete = async (record) => {
+        await requestPost({ url: 'http://localhost:3000/api/interface', body: { id: record.id }, method: 'delete' })
+        let result = await requestPost({ url: 'http://localhost:3000/api/getInterface', body: { id: router.query.id } })
+
+        console.log(result)
+        setList(result.data.data)
+    }
+
     const goHome = () => {
         Router.push('/')
     }
 
     return (
-        <div>
-            <Button onClick={goHome}>返回首页</Button>
-            <Button onClick={handleSubmit}>新增接口</Button>
+        <div className="project-box">
+            <header className="project-header">
+                <Button onClick={goHome}>返回首页</Button>
+                <Button onClick={handleSubmit}>新增接口</Button>
+            </header>
             <Form onSubmit={handleSubmit} layout="inline" className="project-newInterface-form">
                 <Form.Item>
                     {getFieldDecorator('name', {
@@ -143,6 +152,23 @@ const Project = ({ router, res, form }) => {
             </Form>
             <h3>接口列表</h3>
             <Table columns={columns} dataSource={list.reverse()} />
+            <style jsx>
+                {`
+                    .project-box{
+                        width: 100%;
+                        height: 100%;
+                        box-sizing: boder-box;
+                        padding: 20px;
+                    }
+                    .project-header{
+                        margin-bottom: 10px;
+                    }
+                    .project-newInterface-form{
+                        margin: 30px;
+                    }
+                `}
+            </style>
+
         </div>
     )
 }

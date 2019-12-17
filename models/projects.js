@@ -8,6 +8,10 @@ var Project = db.define('projects', {
         defaultValue: Sequelize.UUIDV4,
         primaryKey: true
     },
+    user_id: {
+        type: Sequelize.STRING,
+        // allowNull: false,
+    },
     name: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -18,7 +22,7 @@ var Project = db.define('projects', {
     },
     url: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
     },
     state: {
         type: Sequelize.INTEGER,
@@ -26,10 +30,12 @@ var Project = db.define('projects', {
     }
 });
 
-function add ({ name, url }) {
+function add ({ name, url, desc, user_id }) {
     Project.create({
         name,
         url,
+        desc,
+        user_id
     })
 }
 
@@ -49,6 +55,18 @@ function deleteOne (id) {
         where: { id: id }
     })
 }
+
+// Project.sync({
+//     force: true     //可不传， 若为true则会删除之前的同名表，  如果为false 创建表，如果原来存在，则不创建
+// }).then(function () {
+//     // Table created
+//     return Project.create({
+//         name: 'mason',
+//         url: 'mason',
+//         desc: 'something for test',
+//         user_id: '123@qq.com'
+//     });
+// })
 
 module.exports = {
     add,

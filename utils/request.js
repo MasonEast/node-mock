@@ -14,7 +14,7 @@ export const requestGet = async (params) => {
 export const requestPost = async (params) => {
     let res = await axios({
         headers: { 'content-type': 'application/x-www-form-urlencoded' },
-        method: 'post',
+        method: params.method || 'post',
         url: params.url,
         data: Qs.stringify(params.body)
     })

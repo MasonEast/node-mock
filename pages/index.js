@@ -8,7 +8,6 @@ import { useState } from 'react'
 
 const Home = ({ res = [], form }) => {
     const [flag, setFlag] = useState(false)
-    console.log(res, form)
     const [list, setList] = useState(res)
     const { getFieldDecorator } = form;
 
@@ -27,6 +26,7 @@ const Home = ({ res = [], form }) => {
         form.validateFields(async (err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
+                values.user_id = '123@qq.com'
                 await requestPost({ url: 'http://localhost:3000/api/addProject', body: values })
                 let result = await Home.getInitialProps()
                 console.log(result)
@@ -40,11 +40,18 @@ const Home = ({ res = [], form }) => {
         setFlag(true)
     }
 
-    const goDetail = (id) => {
+    const goDetail = (e, id) => {
         Router.push({
             pathname: '/project',
             query: { id }
         })
+    }
+
+    const deleteProject = async (e, id) => {
+        e.stopPropagation()
+        await requestPost({ url: 'http://localhost:3000/api/project', body: { id }, method: 'delete' })
+        let result = await Home.getInitialProps()
+        setList(result.res)
     }
 
     return (
@@ -58,7 +65,8 @@ const Home = ({ res = [], form }) => {
                             projectName={item.name}
                             url={item.url}
                             id={item.id}
-                            goDetail={() => goDetail(item.id)}
+                            deleteProject={deleteProject}
+                            goDetail={goDetail}
                         />
                     ))
                 }

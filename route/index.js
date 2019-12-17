@@ -4,13 +4,13 @@ const request = require('request');
 
 module.exports = {
     routePost: async ({ params, query }) => {
-        const { id, name, url, desc, head, method, body, data } = query
+        const { id, name, url, desc, user_id, head, method, body, data } = query
         let res = {}
         switch (params) {
             case 'home':
                 return res
             case 'addProject':
-                return await project.add({ name, url, desc })
+                return await project.add({ name, url, desc, user_id })
             case 'addInterface':
                 return await api.addApi({ project_id: id, name, url, desc, head, method, body, data })
             case 'getInterface':
@@ -32,12 +32,21 @@ module.exports = {
     },
 
     routeGet: async ({ params }) => {
-        let res = {}
         switch (params) {
             case 'project':
-                console.log(params)
                 return await project.selectAll()
 
+        }
+    },
+
+    routeDelete: async ({ params, query }) => {
+        const { id } = query
+        switch (params) {
+            case 'project':
+                await api.deleteApi(id)                     //删除项目的同时清空对应的api接口
+                return await project.deleteOne(id)
+            case 'interface':
+                return await api.deleteOneApi(id)
         }
     },
 

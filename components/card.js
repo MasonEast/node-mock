@@ -5,7 +5,7 @@ import Link from 'next/link'
 const CardItem = (props) => {
 
 
-    const { id, projectName, text, url, moveCard, cancel, goDetail } = props
+    const { id, projectName, text, url, moveCard, deleteProject, goDetail } = props
     const ref = useRef(null)
 
     return (
@@ -18,9 +18,9 @@ const CardItem = (props) => {
                 hoverable
                 bodyStyle={{ padding: '36px 28px', }}
                 actions={[
-                    <span key="delete" onClick={() => cancel(id)}><Icon style={{ fontSize: 18 }} title="删除" type="delete" /></span>,
-                    <Link key="edit" href={url}><span ><Icon style={{ fontSize: 18 }} title="编辑" type="edit" /></span></Link>,
-                    <Link key="copy" href={url}><span ><Icon style={{ fontSize: 18 }} title="复制" type="copy" /></span></Link>,
+                    <span key="delete" onClick={(e) => deleteProject(e, id)}><Icon style={{ fontSize: 18 }} title="删除" type="delete" /></span>,
+                    // <Link key="edit" href={url}><span ><Icon style={{ fontSize: 18 }} title="编辑" type="edit" /></span></Link>,
+                    // <Link key="copy" href={url}><span ><Icon style={{ fontSize: 18 }} title="复制" type="copy" /></span></Link>,
                 ]}
             >
                 {text}
