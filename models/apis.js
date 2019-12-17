@@ -35,7 +35,6 @@ var Api = db.define('apis', {
     },
     headers: {
         type: Sequelize.JSON,
-        defaultValue: 'get',
         allowNull: true
     },
     data: {
@@ -56,7 +55,7 @@ function addApi (api) {
         name,
         url,
         desc,
-        head,
+        headers: head,
         method,
         body,
         data,

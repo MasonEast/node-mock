@@ -1,11 +1,14 @@
 import Link from 'next/link'
-import { Table, Button, Input, Divider, Form } from 'antd'
+import { Table, Button, Input, Select, Form } from 'antd'
 import { requestGet, requestPost } from '../utils/request'
 import Router, { withRouter } from 'next/router'
 import 'antd/dist/antd.css'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import URL from '../config/url'
+import InterfaceTabs from '../components/tabs'
 
-
+const { getInterfaceURL, addInterfaceURL, deleteInterfaceURL } = URL
+const { Option } = Select
 
 const Project = ({ router, res, form }) => {
 
@@ -35,9 +38,9 @@ const Project = ({ router, res, form }) => {
             dataIndex: 'method'
         },
         {
-            title: 'Header',
-            key: 'header',
-            dataIndex: 'header'
+            title: 'Head',
+            key: 'head',
+            dataIndex: 'head'
         },
         {
             title: 'Body',
@@ -47,7 +50,8 @@ const Project = ({ router, res, form }) => {
         {
             title: 'Data',
             key: 'data',
-            dataIndex: 'data'
+            dataIndex: 'data',
+            render: data => JSON.parse(data)
         },
         {
             title: 'Action',
@@ -68,8 +72,8 @@ const Project = ({ router, res, form }) => {
             if (!err) {
                 console.log('Received values of form: ', values);
                 values.id = router.query.id
-                await requestPost({ url: 'http://localhost:3000/api/addInterface', body: values })
-                let result = await requestPost({ url: 'http://localhost:3000/api/getInterface', body: { id: router.query.id } })
+                await requestPost({ url: addInterfaceURL, body: values })
+                let result = await requestPost({ url: getInterfaceURL, body: { id: router.query.id } })
 
                 console.log(result)
                 setList(result.data.data)
@@ -77,11 +81,13 @@ const Project = ({ router, res, form }) => {
         });
     };
 
-    const handleDelete = async (record) => {
-        await requestPost({ url: 'http://localhost:3000/api/interface', body: { id: record.id }, method: 'delete' })
-        let result = await requestPost({ url: 'http://localhost:3000/api/getInterface', body: { id: router.query.id } })
+    const handleChange = (e) => {
+        console.log(e)
+    }
 
-        console.log(result)
+    const handleDelete = async (record) => {
+        await requestPost({ url: deleteInterfaceURL, body: { id: record.id }, method: 'delete' })
+        let result = await requestPost({ url: getInterfaceURL, body: { id: router.query.id } })
         setList(result.data.data)
     }
 
@@ -95,8 +101,9 @@ const Project = ({ router, res, form }) => {
                 <Button onClick={goHome}>返回首页</Button>
                 <Button onClick={handleSubmit}>新增接口</Button>
             </header>
+            <InterfaceTabs />
             <Form onSubmit={handleSubmit} layout="inline" className="project-newInterface-form">
-                <Form.Item>
+                <Form.Item label="name">
                     {getFieldDecorator('name', {
                         rules: [{ required: true, message: '接口名称不能为空!' }],
                     })(
@@ -105,7 +112,7 @@ const Project = ({ router, res, form }) => {
                         />,
                     )}
                 </Form.Item>
-                <Form.Item>
+                <Form.Item label="url">
                     {getFieldDecorator('url', {
                         rules: [{ required: true, message: '请求url不能为空!' }],
                     })(
@@ -114,44 +121,48 @@ const Project = ({ router, res, form }) => {
                         />,
                     )}
                 </Form.Item>
-                <Form.Item>
+                <Form.Item label="desc">
                     {getFieldDecorator('desc')(
                         <Input
                             placeholder="接口描述"
                         />,
                     )}
                 </Form.Item>
-                <Form.Item>
+                <Form.Item label="content-type">
                     {getFieldDecorator('head')(
-                        <Input
-                            placeholder="请求头"
-                        />,
+                        <Select placeholder="请求类型" defaultValue="application/json" style={{ width: 240 }} onChange={handleChange}>
+                            <Option value="application/x-www-form-urlencoded">application/x-www-form-urlencoded</Option>
+                            <Option value="multipart/form-data">multipart/form-data</Option>
+                            <Option value="application/json">application/json</Option>
+                            <Option value="text/html">text/html</Option>
+                            {/* <Option value=""></Option> */}
+                        </Select>,
                     )}
                 </Form.Item>
-                <Form.Item>
+                <Form.Item label="method">
                     {getFieldDecorator('method')(
                         <Input
                             placeholder="请求方法"
                         />,
                     )}
                 </Form.Item>
-                <Form.Item>
+                <Form.Item label="body">
                     {getFieldDecorator('body')(
-                        <Input
+                        <Input.TextArea style={{ width: '80vw', height: '20vh' }}
                             placeholder="请求体"
                         />,
                     )}
                 </Form.Item>
-                <Form.Item>
+                <Form.Item label="data">
                     {getFieldDecorator('data')(
-                        <Input
+                        <Input.TextArea style={{ width: '80vw', height: '20vh' }}
                             placeholder="接口返回值"
                         />,
                     )}
                 </Form.Item>
             </Form>
             <h3>接口列表</h3>
-            <Table columns={columns} dataSource={list.reverse()} />
+            <Table columns={columns} dataSource={list} />
             <style jsx>
                 {`
                     .project-box{
@@ -174,8 +185,7 @@ const Project = ({ router, res, form }) => {
 }
 
 Project.getInitialProps = async ({ query }) => {
-    let result = await requestPost({ url: 'http://localhost:3000/api/getInterface', body: { id: query.id } })
-
+    let result = await requestPost({ url: getInterfaceURL, body: { id: query.id } })
     return { res: result.data.data }
 }
 

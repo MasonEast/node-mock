@@ -4,13 +4,15 @@ import { Button, Modal, Form, Icon, Input } from 'antd'
 import Card from '../components/card';
 import 'antd/dist/antd.css'
 import { requestGet, requestPost } from '../utils/request'
+import URL from '../config/url'
 import { useState } from 'react'
+
+const { getProjectURL, addProjectURL, deleteProjectURL } = URL
 
 const Home = ({ res = [], form }) => {
     const [flag, setFlag] = useState(false)
     const [list, setList] = useState(res)
     const { getFieldDecorator } = form;
-
     const handleOk = e => {
         console.log(e);
         setFlag(false)
@@ -27,7 +29,7 @@ const Home = ({ res = [], form }) => {
             if (!err) {
                 console.log('Received values of form: ', values);
                 values.user_id = '123@qq.com'
-                await requestPost({ url: 'http://localhost:3000/api/addProject', body: values })
+                await requestPost({ url: addProjectURL, body: values })
                 let result = await Home.getInitialProps()
                 console.log(result)
                 setList(result.res)
@@ -49,7 +51,7 @@ const Home = ({ res = [], form }) => {
 
     const deleteProject = async (e, id) => {
         e.stopPropagation()
-        await requestPost({ url: 'http://localhost:3000/api/project', body: { id }, method: 'delete' })
+        await requestPost({ url: deleteProjectURL, body: { id }, method: 'delete' })
         let result = await Home.getInitialProps()
         setList(result.res)
     }
@@ -65,6 +67,7 @@ const Home = ({ res = [], form }) => {
                             projectName={item.name}
                             url={item.url}
                             id={item.id}
+                            key={item.id}
                             deleteProject={deleteProject}
                             goDetail={goDetail}
                         />
@@ -137,7 +140,7 @@ const Home = ({ res = [], form }) => {
 }
 
 Home.getInitialProps = async () => {
-    let result = await requestGet({ url: 'http://localhost:3000/api/project' })
+    let result = await requestGet({ url: getProjectURL })
     console.log(result.data)
     return { res: result.data.data }
 }
