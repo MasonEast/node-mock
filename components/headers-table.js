@@ -1,8 +1,10 @@
-import { Table, Input, Button, Popconfirm, Form } from 'antd';
-import React, { useState } from 'react'
+import { Table, Input, Select, Button, Popconfirm, Form } from 'antd';
+import React, { useState, useContext } from 'react'
 import './headers-table.css'
+import { Context } from '../pages/project'
 
 const EditableContext = React.createContext();
+const { Option } = Select
 
 const EditableRow = ({ form, index, ...props }) => (
     <EditableContext.Provider value={form}>
@@ -44,14 +46,11 @@ class EditableCell extends React.Component {
         return editing ? (
             <Form.Item style={{ margin: 0 }}>
                 {form.getFieldDecorator(dataIndex, {
-                    rules: [
-                        {
-                            required: true,
-                            message: `${title} is required.`,
-                        },
-                    ],
                     initialValue: record[dataIndex],
-                })(<Input ref={node => (this.input = node)} onPressEnter={this.save} onBlur={this.save} />)}
+                })(<Select style={{ width: '240px' }} ref={node => (this.input = node)} onPressEnter={this.save} onBlur={this.save}>
+                    <Option value="111">111</Option>
+                    <Option value="222">222</Option>
+                </Select>)}
             </Form.Item>
         ) : (
                 <div
@@ -87,116 +86,6 @@ class EditableCell extends React.Component {
     }
 }
 
-// class HeadersTable extends React.Component {
-//     constructor(props) {
-//         super(props);
-//         this.columns = [
-//             {
-//                 title: 'Key',
-//                 dataIndex: 'Key',
-//                 width: '30%',
-//                 editable: true,
-//             },
-//             {
-//                 title: 'Value',
-//                 dataIndex: 'Value',
-//                 width: '30%',
-//                 editable: true,
-//             },
-//             {
-//                 title: 'operation',
-//                 dataIndex: 'operation',
-//                 render: (text, record) =>
-//                     this.state.dataSource.length >= 1 ? (
-//                         <Popconfirm title="Sure to delete?" onConfirm={() => this.handleDelete(record.key)}>
-//                             <a>Delete</a>
-//                         </Popconfirm>
-//                     ) : null,
-//             },
-//         ];
-
-//         this.state = {
-//             dataSource: [
-//                 {
-//                     key: '0',
-//                     Key: '',
-//                     Value: '',
-//                 }
-//             ],
-//             count: 1,
-//         };
-//     }
-
-//     handleDelete = key => {
-//         const dataSource = [...this.state.dataSource];
-//         this.setState({ dataSource: dataSource.filter(item => item.key !== key) });
-//     };
-
-//     handleAdd = () => {
-//         const { count, dataSource } = this.state;
-//         const newData = {
-//             key: count,
-//             name: `Edward King ${count}`,
-//             age: 32,
-//             address: `London, Park Lane no. ${count}`,
-//         };
-//         this.setState({
-//             dataSource: [...dataSource, newData],
-//             count: count + 1,
-//         });
-//     };
-
-//     handleSave = row => {
-//         const newData = [...this.state.dataSource];
-//         const index = newData.findIndex(item => row.key === item.key);
-//         const item = newData[index];
-//         newData.splice(index, 1, {
-//             ...item,
-//             ...row,
-//         });
-//         this.setState({ dataSource: newData });
-//     };
-
-//     render () {
-//         const { dataSource } = this.state;
-//         const components = {
-//             body: {
-//                 row: EditableFormRow,
-//                 cell: EditableCell,
-//             },
-//         };
-//         const columns = this.columns.map(col => {
-//             if (!col.editable) {
-//                 return col;
-//             }
-//             return {
-//                 ...col,
-//                 onCell: record => ({
-//                     record,
-//                     editable: col.editable,
-//                     dataIndex: col.dataIndex,
-//                     title: col.title,
-//                     handleSave: this.handleSave,
-//                 }),
-//             };
-//         });
-//         return (
-//             <div>
-//                 <Button onClick={this.handleAdd} type="primary" style={{ marginBottom: 16 }}>
-//                     Add a row
-//         </Button>
-//                 <Table
-//                     components={components}
-//                     rowClassName={() => 'editable-row'}
-//                     bordered
-//                     dataSource={dataSource}
-//                     columns={columns}
-//                 />
-//             </div>
-//         );
-//     }
-// }
-
 const HeadersTable = (props) => {
 
     const [dataSource, setDataSource] = useState([
@@ -206,22 +95,26 @@ const HeadersTable = (props) => {
             Value: '',
         }
     ])
+    const AppContext = useContext(Context)
 
 
     let columns = [
         {
+            key: 0,
             title: 'Key',
             dataIndex: 'Key',
             width: '30%',
             editable: true,
         },
         {
+            key: 1,
             title: 'Value',
             dataIndex: 'Value',
             width: '30%',
             editable: true,
         },
         {
+            key: 2,
             title: 'operation',
             dataIndex: 'operation',
             render: (text, record) =>
@@ -255,8 +148,11 @@ const HeadersTable = (props) => {
             ...item,
             ...row,
         });
-        setDataSource(newData)
+        setDataSource(() => newData)
+        AppContext.dispatch({ type: 'ADD_HEADERS', data: newData })
     };
+
+
     const components = {
         body: {
             row: EditableFormRow,
@@ -284,13 +180,14 @@ const HeadersTable = (props) => {
         <div>
             <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }}>
                 Add a row
-                </Button>
+            </Button>
             <Table
                 components={components}
                 rowClassName={() => 'editable-row'}
                 bordered
                 dataSource={dataSource}
                 columns={columns}
+                pagination={false}
             />
         </div>
     );
