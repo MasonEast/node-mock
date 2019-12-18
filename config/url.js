@@ -1,4 +1,4 @@
-const host = 'http://localhost:3000'
+const host = 'http://localhost:5000'
 
 export default {
     getProjectURL: `${host}/api/project`,

@@ -35,6 +35,7 @@ var Api = db.define('apis', {
     },
     headers: {
         type: Sequelize.JSON,
+        defaultValue: '',
         allowNull: true
     },
     data: {
@@ -73,12 +74,13 @@ function selectOneApi (id) {
     })
 }
 
-function findOneApiByUrl ({ url, project_id, method = 'get' }) {
+function findOneApiByUrl ({ url, project_id, method = 'get', headers }) {
     return Api.findOne({
         where: {
             url,
             project_id,
             method: method.toLowerCase(),
+            // headers,
             state: 1
         },
         raw: true

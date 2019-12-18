@@ -1,44 +1,44 @@
 {
-  "name": "server_mock",
-  "version": "1.0.0",
-  "description": "",
-  "main": "app.js",
-  "scripts": {
-    "dev": "next",
-    "build": "next build",
-    "start": "next start"
-  },
-  "keywords": [],
-  "author": "mason",
-  "license": "ISC",
-  "dependencies": {
-    "@zeit/next-bundle-analyzer": "^0.1.2",
-    "@zeit/next-css": "^1.0.1",
-    "@zeit/next-less": "^1.0.1",
-    "antd": "^3.26.0",
-    "axios": "^0.19.0",
-    "babel-plugin-import": "^1.12.1",
-    "babel-plugin-styled-components": "^1.1.5",
-    "classnames": "^2.2.6",
-    "cross-env": "^6.0.0",
-    "ejs": "^3.0.1",
-    "koa": "^2.11.0",
-    "koa-body": "^4.1.1",
-    "koa-bodyparser": "^4.2.1",
-    "koa-cors": "^0.0.16",
-    "koa-router": "^7.4.0",
-    "koa-session": "^5.12.3",
-    "less": "^3.10.3",
-    "next": "^9.1.4",
-    "qs": "^6.9.1",
-    "react": "^16.12.0",
-    "react-dom": "^16.12.0",
-    "request": "^2.88.0",
-    "sequelize": "^5.21.2",
-    "sqlite3": "^4.1.0",
-    "styled-components": "^2.1.0"
-  },
-  "devDependencies": {
-    "css-loader": "^3.3.0"
-  }
+    "name": "server_mock",
+    "version": "1.0.0",
+    "description": "",
+    "main": "app.js",
+    "scripts": {
+        "dev": "next",
+        "build": "next build",
+        "start": "next start"
+    },
+    "keywords": [],
+    "author": "mason",
+    "license": "ISC",
+    "dependencies": {
+        "@zeit/next-bundle-analyzer": "^0.1.2",
+        "@zeit/next-css": "^1.0.1",
+        "@zeit/next-less": "^1.0.1",
+        "antd": "^3.26.0",
+        "axios": "^0.19.0",
+        "babel-plugin-import": "^1.12.1",
+        "babel-plugin-styled-components": "^1.1.5",
+        "classnames": "^2.2.6",
+        "cross-env": "^6.0.0",
+        "ejs": "^3.0.1",
+        "koa": "^2.11.0",
+        "koa-body": "^4.1.1",
+        "koa-bodyparser": "^4.2.1",
+        "koa-cors": "^0.0.16",
+        "koa-router": "^7.4.0",
+        "koa-session": "^5.12.3",
+        "less": "^3.10.3",
+        "next": "^9.1.4",
+        "qs": "^6.9.1",
+        "react": "^16.12.0",
+        "react-dom": "^16.12.0",
+        "request": "^2.88.0",
+        "sequelize": "^5.21.2",
+        "sqlite3": "^4.1.0",
+        "styled-components": "^2.1.0"
+    },
+    "devDependencies": {
+        "css-loader": "^3.3.0"
+    }
 }

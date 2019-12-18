@@ -25,7 +25,6 @@ module.exports = {
 
     routeDelete: async ({ params, query }) => {
         const { id } = query
-        console.log(params, query)
         switch (params) {
             case 'project':
                 await api.deleteApi(id)                     //删除项目的同时清空对应的api接口
@@ -36,9 +35,12 @@ module.exports = {
     },
 
     routeMock: async ({ params, body = {}, url, header, method = 'get' }) => {
-        console.log(params, url, method, header, body)
-        let res = await api.findOneApiByUrl({ url: params[0], project_id: params.project_id, method, header })
-        return res.data
+        let headers = ''
+        header['content-type'] && (headers = { contentType: header['content-type'] })
+        let res = await api.findOneApiByUrl({ url: params[0], project_id: params.project_id, method, headers })
+        let result = JSON.stringify('接口请求错误（可能原因： url， headers， method存在问题')
+        res && res.headers === JSON.stringify(headers) && (result = res.data)
+        return result
     },
 }
 

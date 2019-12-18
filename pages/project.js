@@ -7,6 +7,7 @@ import URL from '../config/url'
 import InterfaceTabs from '../components/tabs'
 import { createContext, useReducer, useState } from 'react'
 
+const { Option } = Select
 export const Context = createContext(null)
 
 const { getInterfaceURL, addInterfaceURL, deleteInterfaceURL } = URL
@@ -18,14 +19,12 @@ const reducer = (state, action) => {
             action.data.forEach(item => {
                 headers[item['Key']] = item['Value']
             })
-            console.log(headers)
             return { ...state, headers }
         case 'ADD_BODY':
             let body = {}
             action.data.forEach(item => {
                 body[item['Key']] = item['Value']
             })
-            console.log(body)
             return { ...state, body, bodyType: action.dataType };
         case 'ADD_DATA':
             return { ...state, data: action.data, };
@@ -125,8 +124,8 @@ const Project = ({ router, res, form }) => {
         <Context.Provider value={{ state, dispatch }}>
             <div className="project-box">
                 <header className="project-header">
-                    <Button onClick={goHome}>返回首页</Button>
-                    <Button onClick={handleSubmit}>新增接口</Button>
+                    <Button style={{ marginRight: '20px' }} onClick={goHome}>返回首页</Button>
+                    <Button type="primary" onClick={handleSubmit}>新增接口</Button>
                 </header>
                 <Form onSubmit={handleSubmit} layout="inline" className="project-newInterface-form">
                     <Form.Item label="name">
@@ -154,26 +153,30 @@ const Project = ({ router, res, form }) => {
                             />,
                         )}
                     </Form.Item>
-                    {/* <Form.Item label="content-type">
-                        {getFieldDecorator('head')(
-                            <Select placeholder="请求类型" style={{ width: 240 }} onChange={handleChange}>
-                                <Option value="application/x-www-form-urlencoded">application/x-www-form-urlencoded</Option>
-                                <Option value="multipart/form-data">multipart/form-data</Option>
-                                <Option value="application/json">application/json</Option>
-                                <Option value="text/html">text/html</Option>
-                            </Select>,
-                        )}
-                    </Form.Item> */}
                     <Form.Item label="method">
-                        {getFieldDecorator('method')(
-                            <Input
-                                placeholder="请求方法"
-                            />,
+                        {getFieldDecorator('method', {
+                            initialValue: 'get',
+                        })(
+                            <Select style={{ width: '140px' }}>
+                                <Option value="get">get</Option>
+                                <Option value="post">post</Option>
+                                <Option value="delete">delete</Option>
+                                <Option value="update">update</Option>
+                            </Select>
                         )}
                     </Form.Item>
                 </Form>
 
                 <InterfaceTabs />
+
+                <h3>接口使用规则</h3>
+                <div style={{ marginBottom: '25px' }}>
+                    <p>使用mock接口需要在你的接口前面加上/mock/项目id， 以此来做区分；</p>
+                    <p>http://47.100.38.254:5000/mock/project_id/你的接口url</p>
+                    <p>eg: <span style={{ color: 'pink', fontSize: '18px' }}>http://47.100.38.254:5000/mock/{router.query.id}/url</span></p>
+                    <hr />
+                </div>
+
                 <h3>接口列表</h3>
                 <Table rowKey={record => record.id} columns={columns} dataSource={list} />
                 <style jsx>
