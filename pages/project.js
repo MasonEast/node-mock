@@ -101,17 +101,17 @@ const Project = ({ router, res, form }) => {
                 values.headers = state.headers
                 values.bodyType = state.bodyType
                 values.data = state.data
-                let res = await requestPost({ url: addInterfaceURL, body: values })
-                let result = await requestPost({ url: getInterfaceURL, body: { id: router.query.id } })
-                setList(result.data.data)
+                await requestPost({ url: addInterfaceURL, body: values })
+                let result = await requestGet({ url: getInterfaceURL, query: { id: router.query.id } })
+                result.data.status ? message.error('请求出现了点问题') : setList(result.data.data)
             }
         });
     };
 
     const handleDelete = async (record) => {
         await requestPost({ url: deleteInterfaceURL, body: { id: record.id }, method: 'delete' })
-        let result = await requestPost({ url: getInterfaceURL, body: { id: router.query.id } })
-        setList(result.data.data)
+        let result = await requestGet({ url: getInterfaceURL, query: { id: router.query.id } })
+        result.data.status ? message.error('请求出现了点问题') : setList(result.data.data)
     }
 
     const goHome = () => {
@@ -219,7 +219,7 @@ const Project = ({ router, res, form }) => {
 }
 
 Project.getInitialProps = async ({ query }) => {
-    let result = await requestPost({ url: getInterfaceURL, body: { id: query.id } })
+    let result = await requestGet({ url: getInterfaceURL, query: { id: query.id } })
     return { res: result.data.data }
 }
 

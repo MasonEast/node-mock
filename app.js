@@ -22,7 +22,7 @@ server.use(koaBody({
     }
 }))
 
-const response = (err, res, ctx) => {
+const response = (res, err, ctx) => {
     if (err) {
         return ctx.body = {
             status: 1,
@@ -37,14 +37,14 @@ const response = (err, res, ctx) => {
 
 //next页面api接口
 router.post('/api/:page', async ctx => {
-    await routePost({ params: ctx.params.page, query: ctx.request.body }).then((err, res) => {
+    await routePost({ params: ctx.params.page, query: ctx.request.body }).then((res, err) => {
         console.log(111, res)
-        response(err, res, ctx)
+        response(res, err, ctx)
     })
 })
 
 router.get('/api/:page', async ctx => {
-    await routeGet({ params: ctx.params.page }).then((err, res) => {
+    await routeGet({ params: ctx.params.page, query: ctx.request.query }).then((err, res) => {
         response(err, res, ctx)
     })
 })

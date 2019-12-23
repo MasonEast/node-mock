@@ -47,7 +47,7 @@ function selectOne (id) {
 }
 
 function selectAll () {
-    return Project.findAll({ raw: true })
+    return Project.findAll({ raw: true, order: [['createdAt', 'DESC']] })
 }
 
 function deleteOne (id) {

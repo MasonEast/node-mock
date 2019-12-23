@@ -7,24 +7,20 @@ module.exports = {
         const { id, name, url, desc, user_id, headers, method, body, data } = query
         switch (params) {
             case 'addProject':
-                const res = await project.add({ name, url, desc, user_id })
-                console.log(res)
-                return
+                return await project.add({ name, url, desc, user_id }).then(res => res).catch(error => error.message)
             case 'addInterface':
-                return await api.addApi({ project_id: id, name, url, desc, headers, method, body, data })
-            case 'getInterface':
-                let f = await api.selectAllApi(id).then(res => res).catch(error => error)
-                console.log(f)
-                return f
+                return await api.addApi({ project_id: id, name, url, desc, headers, method, body, data }).then(res => res).catch(error => error.message)
             default:
                 return '接口请求出错'
         }
     },
 
-    routeGet: async ({ params }) => {
+    routeGet: async ({ params, query }) => {
         switch (params) {
             case 'project':
-                return await project.selectAll()
+                return await project.selectAll().then(res => res).catch(error => error.message)
+            case 'getInterface':
+                return await api.selectAllApi(query.id).then(res => res).catch(error => error.message)
             default:
                 return '接口请求出错'
 
@@ -36,9 +32,9 @@ module.exports = {
         switch (params) {
             case 'project':
                 await api.deleteApi(id)                     //删除项目的同时清空对应的api接口
-                return await project.deleteOne(id)
+                return await project.deleteOne(id).then(res => res).catch(error => error.message)
             case 'interface':
-                return await api.deleteOneApi(id)
+                return await api.deleteOneApi(id).then(res => res).catch(error => error.message)
             default:
                 return '接口请求出错'
         }

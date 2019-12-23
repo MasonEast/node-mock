@@ -1,11 +1,12 @@
 import axios from 'axios'
 import Qs from 'qs'
-const querystring = require('querystring');
+import { message } from 'antd'
 
 export const requestGet = async (params) => {
     let res = await axios({
         method: 'get',
-        url: params.url
+        url: params.url,
+        params: params.query
     })
     return res
 }
@@ -17,6 +18,6 @@ export const requestPost = async (params) => {
         url: params.url,
         data: Qs.stringify(params.body)
     })
-    console.log(res)
+    res.data.status ? message.error('error') : message.success('success')
     return res
 }

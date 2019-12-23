@@ -93,7 +93,8 @@ function selectAllApi (id) {
             project_id: id,
             state: 1
         },
-        raw: true
+        raw: true,
+        order: [['createdAt', 'DESC']]
     })
 }
 

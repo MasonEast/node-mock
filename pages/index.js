@@ -1,6 +1,6 @@
 
 import Router, { withRouter } from 'next/router'
-import { Button, Modal, Form, Spin, Input } from 'antd'
+import { Button, Modal, Form, Spin, Input, message } from 'antd'
 import Card from '../components/card';
 import { requestGet, requestPost } from '../utils/request'
 import URL from '../config/url'
@@ -50,7 +50,7 @@ const Home = ({ res = [], form }) => {
 
     const deleteProject = async (e, id) => {
         e.stopPropagation()
-        await requestPost({ url: deleteProjectURL, body: { id }, method: 'delete' })
+        let deleteResult = await requestPost({ url: deleteProjectURL, body: { id }, method: 'delete' })
         let result = await Home.getInitialProps()
         setList(result.res)
     }
