@@ -1,11 +1,10 @@
-import Link from 'next/link'
-import { Table, Button, Input, Select, Form } from 'antd'
+import { Table, Button, Input, Select, Form, message } from 'antd'
 import { requestGet, requestPost } from '../utils/request'
 import Router, { withRouter } from 'next/router'
-import 'antd/dist/antd.css'
 import URL from '../config/url'
 import InterfaceTabs from '../components/tabs'
 import { createContext, useReducer, useState } from 'react'
+import Head from '../components/head'
 
 const { Option } = Select
 export const Context = createContext(null)
@@ -96,14 +95,13 @@ const Project = ({ router, res, form }) => {
         e.preventDefault();
         form.validateFields(async (err, values) => {
             if (!err) {
-                console.log('Received values of form: ', values, state);
                 values.url.charAt(0) === '/' && (values.url = values.url.substr(1))
                 values.id = router.query.id
                 values.body = state.body
                 values.headers = state.headers
                 values.bodyType = state.bodyType
                 values.data = state.data
-                await requestPost({ url: addInterfaceURL, body: values })
+                let res = await requestPost({ url: addInterfaceURL, body: values })
                 let result = await requestPost({ url: getInterfaceURL, body: { id: router.query.id } })
                 setList(result.data.data)
             }
@@ -121,66 +119,67 @@ const Project = ({ router, res, form }) => {
     }
 
     return (
-        <Context.Provider value={{ state, dispatch }}>
-            <div className="project-box">
-                <header className="project-header">
-                    <Button style={{ marginRight: '20px' }} onClick={goHome}>返回首页</Button>
-                    <Button type="primary" onClick={handleSubmit}>新增接口</Button>
-                </header>
-                <Form onSubmit={handleSubmit} layout="inline" className="project-newInterface-form">
-                    <Form.Item label="name">
-                        {getFieldDecorator('name', {
-                            rules: [{ required: true, message: '接口名称不能为空!' }],
-                        })(
-                            <Input
-                                placeholder="接口名称"
-                            />,
-                        )}
-                    </Form.Item>
-                    <Form.Item label="url">
-                        {getFieldDecorator('url', {
-                            rules: [{ required: true, message: '请求url不能为空!' }],
-                        })(
-                            <Input
-                                placeholder="请求url"
-                            />,
-                        )}
-                    </Form.Item>
-                    <Form.Item label="desc">
-                        {getFieldDecorator('desc')(
-                            <Input
-                                placeholder="接口描述"
-                            />,
-                        )}
-                    </Form.Item>
-                    <Form.Item label="method">
-                        {getFieldDecorator('method', {
-                            initialValue: 'get',
-                        })(
-                            <Select style={{ width: '140px' }}>
-                                <Option value="get">get</Option>
-                                <Option value="post">post</Option>
-                                <Option value="delete">delete</Option>
-                                <Option value="update">update</Option>
-                            </Select>
-                        )}
-                    </Form.Item>
-                </Form>
+        <Head>
+            <Context.Provider value={{ state, dispatch }}>
+                <div className="project-box">
+                    <header className="project-header">
+                        <Button style={{ marginRight: '20px' }} onClick={goHome}>返回首页</Button>
+                        <Button type="primary" onClick={handleSubmit}>新增接口</Button>
+                    </header>
+                    <Form onSubmit={handleSubmit} layout="inline" className="project-newInterface-form">
+                        <Form.Item label="name">
+                            {getFieldDecorator('name', {
+                                rules: [{ required: true, message: '接口名称不能为空!' }],
+                            })(
+                                <Input
+                                    placeholder="接口名称"
+                                />,
+                            )}
+                        </Form.Item>
+                        <Form.Item label="url">
+                            {getFieldDecorator('url', {
+                                rules: [{ required: true, message: '请求url不能为空!' }],
+                            })(
+                                <Input
+                                    placeholder="请求url"
+                                />,
+                            )}
+                        </Form.Item>
+                        <Form.Item label="desc">
+                            {getFieldDecorator('desc')(
+                                <Input
+                                    placeholder="接口描述"
+                                />,
+                            )}
+                        </Form.Item>
+                        <Form.Item label="method">
+                            {getFieldDecorator('method', {
+                                initialValue: 'get',
+                            })(
+                                <Select style={{ width: '140px' }}>
+                                    <Option value="get">get</Option>
+                                    <Option value="post">post</Option>
+                                    <Option value="delete">delete</Option>
+                                    <Option value="update">update</Option>
+                                </Select>
+                            )}
+                        </Form.Item>
+                    </Form>
 
-                <InterfaceTabs />
+                    <InterfaceTabs />
 
-                <h3>接口使用规则</h3>
-                <div style={{ marginBottom: '25px' }}>
-                    <p>使用mock接口需要在你的接口前面加上/mock/项目id， 以此来做区分；</p>
-                    <p>http://47.100.38.254:5000/mock/project_id/你的接口url</p>
-                    <p>eg: <span style={{ color: 'pink', fontSize: '18px' }}>http://47.100.38.254:5000/mock/{router.query.id}/url</span></p>
-                    <hr />
-                </div>
+                    <h3>接口使用规则</h3>
+                    <div style={{ marginBottom: '25px' }}>
+                        <p>使用mock接口需要在你的接口前面加上/mock/项目id， 以此来做区分；</p>
+                        <p>http://47.100.38.254:5001/mock/project_id/你的接口url</p>
+                        <p>eg: <span style={{ color: 'pink', fontSize: '18px' }}>http://47.100.38.254:5001/mock/{router.query.id}/url</span></p>
+                        <hr />
+                    </div>
 
-                <h3>接口列表</h3>
-                <Table rowKey={record => record.id} columns={columns} dataSource={list} />
-                <style jsx>
-                    {`
+                    <h3>接口列表</h3>
+                    <Table rowKey={record => record.id} columns={columns} dataSource={list} />
+                    <style jsx>
+                        {`
                     .project-box{
                         width: 100%;
                         height: 100%;
@@ -209,11 +208,13 @@ const Project = ({ router, res, form }) => {
                       }
                     
                 `}
-                </style>
+                    </style>
 
-            </div>
+                </div>
 
-        </Context.Provider>
+            </Context.Provider>
+
+        </Head>
     )
 }
 

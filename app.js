@@ -2,7 +2,7 @@ const Koa = require('koa')
 const next = require('next')
 const Router = require('koa-router')
 const { routePost, routeGet, routeDelete, routeMock } = require('./route')
-const port = parseInt(process.env.PORT, 10) || 5000
+const port = parseInt(process.env.PORT, 10) || 5001
 const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
 const handle = app.getRequestHandler()
@@ -22,41 +22,44 @@ server.use(koaBody({
     }
 }))
 
+const response = (err, res, ctx) => {
+    if (err) {
+        return ctx.body = {
+            status: 1,
+            data: err
+        }
+    }
+    return ctx.body = {
+        status: 0,
+        data: res
+    }
+}
+
 //next页面api接口
 router.post('/api/:page', async ctx => {
-    await routePost({ params: ctx.params.page, query: ctx.request.body }).then(res => {
-        return ctx.body = {
-            msg: 'success',
-            data: res
-        }
+    await routePost({ params: ctx.params.page, query: ctx.request.body }).then((err, res) => {
+        console.log(111, res)
+        response(err, res, ctx)
     })
 })
+
 router.get('/api/:page', async ctx => {
-    await routeGet({ params: ctx.params.page }).then(res => {
-        return ctx.body = {
-            msg: 'success',
-            data: res
-        }
+    await routeGet({ params: ctx.params.page }).then((err, res) => {
+        response(err, res, ctx)
     })
 })
 
 router.delete('/api/:page', async ctx => {
-    await routeDelete({ params: ctx.params.page, query: ctx.request.body }).then(res => {
-        return ctx.body = {
-            msg: 'success',
-            data: res
-        }
+    await routeDelete({ params: ctx.params.page, query: ctx.request.body }).then((err, res) => {
+        response(err, res, ctx)
     })
 })
 
 //mock数据接口
 router.all('/mock/:project_id/*', async ctx => {
     const { method, body, url, header } = ctx.request
-    await routeMock({ params: ctx.params, body, method, url, header }).then(res => {
-        return ctx.body = {
-            msg: 'success',
-            data: JSON.parse(res)
-        }
+    await routeMock({ params: ctx.params, body, method, url, header }).then((err, res) => {
+        response(err, res, ctx)
     })
 })
 

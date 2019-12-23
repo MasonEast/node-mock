@@ -1,4 +1,7 @@
-const host = 'http://localhost:5000'
+
+const host = `http://localhost:5001`
+
+export const port = parseInt(process.env.PORT, 10) || 5001
 
 export default {
     getProjectURL: `${host}/api/project`,

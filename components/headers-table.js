@@ -1,6 +1,5 @@
 import { Table, Input, Select, Button, Popconfirm, Form } from 'antd';
 import React, { useState, useContext } from 'react'
-import './headers-table.css'
 import { Context } from '../pages/project'
 
 const EditableContext = React.createContext();
@@ -42,7 +41,6 @@ class EditableCell extends React.Component {
     renderCell = form => {
         this.form = form;
         const { children, dataIndex, record, options } = this.props;
-        console.log(options)
         const { editing } = this.state;
         return editing ? (
             <Form.Item style={{ margin: 0 }}>

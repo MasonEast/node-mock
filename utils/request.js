@@ -7,7 +7,6 @@ export const requestGet = async (params) => {
         method: 'get',
         url: params.url
     })
-
     return res
 }
 
@@ -18,5 +17,6 @@ export const requestPost = async (params) => {
         url: params.url,
         data: Qs.stringify(params.body)
     })
+    console.log(res)
     return res
 }

@@ -7,11 +7,17 @@ module.exports = {
         const { id, name, url, desc, user_id, headers, method, body, data } = query
         switch (params) {
             case 'addProject':
-                return await project.add({ name, url, desc, user_id })
+                const res = await project.add({ name, url, desc, user_id })
+                console.log(res)
+                return
             case 'addInterface':
                 return await api.addApi({ project_id: id, name, url, desc, headers, method, body, data })
             case 'getInterface':
-                return await api.selectAllApi(id)
+                let f = await api.selectAllApi(id).then(res => res).catch(error => error)
+                console.log(f)
+                return f
+            default:
+                return '接口请求出错'
         }
     },
 
@@ -19,6 +25,8 @@ module.exports = {
         switch (params) {
             case 'project':
                 return await project.selectAll()
+            default:
+                return '接口请求出错'
 
         }
     },
@@ -31,6 +39,8 @@ module.exports = {
                 return await project.deleteOne(id)
             case 'interface':
                 return await api.deleteOneApi(id)
+            default:
+                return '接口请求出错'
         }
     },
 
@@ -38,9 +48,15 @@ module.exports = {
         let headers = ''
         header['content-type'] && (headers = { contentType: header['content-type'] })
         let res = await api.findOneApiByUrl({ url: params[0], project_id: params.project_id, method, headers })
-        let result = JSON.stringify('接口请求错误（可能原因： url， headers， method存在问题')
-        res && res.headers === JSON.stringify(headers) && (result = res.data)
-        return result
+        let result = '接口请求错误（可能原因： url存在问题'
+        if (res && res.headers !== JSON.stringify(headers)) {
+            return '接口请求错误（可能原因： headers存在问题'
+        }
+        if (res && res.body !== JSON.stringify(body)) {
+            return '接口请求错误（可能原因： body存在问题'
+        }
+        res && (result = res.data)
+        return JSON.parse(result)
     },
 }
 

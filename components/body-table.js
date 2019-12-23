@@ -1,6 +1,5 @@
 import { Table, Input, Radio, Select, Button, Popconfirm, Form } from 'antd';
 import React, { useState, useContext } from 'react'
-import './headers-table.css'
 import { Context } from '../pages/project'
 
 const EditableContext = React.createContext();

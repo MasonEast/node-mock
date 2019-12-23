@@ -9,7 +9,7 @@ const CardItem = (props) => {
     const ref = useRef(null)
 
     return (
-        <div ref={ref} className="cardItem" >
+        <div ref={ref} className="cardItem" style={{ width: '30%', marginTop: '20px' }}>
             <Card className="card-box"
                 onClick={(e) => {
                     goDetail(e, id, projectName)
@@ -25,14 +25,7 @@ const CardItem = (props) => {
             >
                 {desc}
             </Card>
-            <style jsx>
-                {`
-                    .cardItem{
-                        width: 30%;
-                        margin-top: 40px;
-                    }
-                `}
-            </style>
+
         </div>
 
     )

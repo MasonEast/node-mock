@@ -1,0 +1,15 @@
+/* 这里使用了一个外联样式是因为jsx加载存在加载顺序问题 */
+.home-box{
+    width: 100%;
+    height: 100%;
+    box-sizing: boder-box;
+    padding: 50px;
+}
+.home-content{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap
+}
+.empty-item{
+    width: 30%;
+}
