@@ -4,11 +4,12 @@ import { Button, Modal, Form, Spin, Input, message } from 'antd'
 import Card from '../components/card';
 import { requestGet, requestPost } from '../utils/request'
 import URL from '../config/url'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Head from '../components/head'
 import LoginModal from '../components/login-modal'
 
 const { getProjectURL, addProjectURL, deleteProjectURL } = URL
+const storage = global.localStorage;
 
 const Home = ({ res = [], form }) => {
     const [flag, setFlag] = useState(false)
@@ -20,6 +21,22 @@ const Home = ({ res = [], form }) => {
     })
     const [list, setList] = useState(res)
     const { getFieldDecorator } = form;
+
+    useEffect(() => {                                   //验证是否本地是否有登录记录， 有的话直接登录
+        const validateIsLogin = JSON.parse(storage.getItem("mock_email"))
+        if (validateIsLogin) {
+            setIsLogin({
+                status: true,
+                email: validateIsLogin
+            })
+            requestGet({ url: getProjectURL, query: { user_id: validateIsLogin } }).then(res => {
+                res.data.status ? message(res.data.data) : setList(res.data.data)
+            })
+
+
+        }
+    }, [])
+
     const handleOk = e => {
         setFlag(false)
     };
@@ -63,9 +80,8 @@ const Home = ({ res = [], form }) => {
             status: true,
             email
         })
-        console.log(email)
+        storage.setItem("mock_email", JSON.stringify(email));
         let res = await requestGet({ url: getProjectURL, query: { user_id: email } })
-        console.log(res)
         res.data.status ? message(res.data.data) : setList(res.data.data)
     }
 
@@ -90,7 +106,10 @@ const Home = ({ res = [], form }) => {
                         {
                             isLogin.status
                                 ?
-                                <div className="header-box-tab-login" >欢迎, {isLogin.email} <span onClick={() => setIsLogin({ status: false, email: '' })}>退出</span></div>
+                                <div className="header-box-tab-login" >欢迎, {isLogin.email} <span onClick={() => {
+                                    setIsLogin({ status: false, email: '' })
+                                    storage.removeItem("mock_email")
+                                }}>退出</span></div>
                                 :
                                 <div className="header-box-tab-nologin" onClick={() => setModalFlag(true)}>登录/注册</div>
                         }

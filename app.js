@@ -41,14 +41,12 @@ const response = (res, err, ctx) => {
 //next页面api接口
 router.post('/api/:page', async ctx => {
     await routePost({ params: ctx.params.page, query: ctx.request.body }).then((res, err) => {
-        console.log(111, res, err)
         response(res, err, ctx)
     })
 })
 
 router.get('/api/:page', async ctx => {
     await routeGet({ params: ctx.params.page, query: ctx.request.query }).then((res, err) => {
-        console.log(222, err, res)
         response(res, err, ctx)
     })
 })

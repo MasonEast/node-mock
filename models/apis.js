@@ -25,12 +25,12 @@ var Api = db.define('apis', {
     },
     method: {
         type: Sequelize.STRING,
-        defaultValue: 'get',
+        defaultValue: '',
         allowNull: true
     },
     body: {
         type: Sequelize.JSON,
-        defaultValue: 'get',
+        defaultValue: {},
         allowNull: true
     },
     headers: {
@@ -87,6 +87,16 @@ function findOneApiByUrl ({ url, project_id, method = 'get', headers }) {
     })
 }
 
+function validate ({ url, project_id, }) {
+    return Api.findOne({
+        where: {
+            url,
+            project_id,
+        },
+        raw: true
+    })
+}
+
 function selectAllApi (id) {
     return Api.findAll({
         where: {
@@ -123,6 +133,18 @@ function updateApi (content, condition) {
     return Api.update(content, condition)
 }
 
+Api.sync({
+    force: true     //可不传， 若为true则会删除之前的同名表，  如果为false 创建表，如果原来存在，则不创建
+}).then(function () {
+    // Table created
+    return Api.create({
+        name: 'test',
+        desc: 'test',
+        project_id: 'example',
+        url: 'xxx',
+    });
+})
+
 module.exports = {
     addApi,
     selectAllApi,
@@ -131,5 +153,6 @@ module.exports = {
     updateApi,
     deleteOneApi,
     selectApiByCondiction,
-    findOneApiByUrl
+    findOneApiByUrl,
+    validate
 }

@@ -23,7 +23,6 @@ class LoginModal extends Component {
 
         } else {
             requestPost({ url: registerURL, body: formData }).then(res => {
-                console.log(res)
                 !res.data.status && this.loginSuccess(res.data.data.email)
             })
         }

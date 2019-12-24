@@ -94,7 +94,7 @@ const BodyTable = (props) => {
         }
     ])
     const [radioValue, setRadioValue] = useState('none')
-    
+
     const AppContext = useContext(Context)
 
     let columns = [
@@ -183,7 +183,6 @@ const BodyTable = (props) => {
                 </Button>
                 <Radio.Group onChange={(e) => {
                     // e.persist()
-                    console.log(e.target)
                     setRadioValue(e.target.value)
                 }}
                     value={radioValue}

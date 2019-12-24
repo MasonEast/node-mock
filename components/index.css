@@ -30,8 +30,7 @@
     align-items: center;
 }
 .nologin-text{
-    display: flex;
-    /* align-items: center;  */
-    justify-content: center; 
+    text-align: center;
+    margin-top: 300px
 }
 

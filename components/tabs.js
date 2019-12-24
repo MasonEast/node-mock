@@ -7,7 +7,6 @@ import { useContext } from 'react'
 const { TabPane } = Tabs;
 
 function callback (key) {
-    console.log(key);
 }
 const InterfaceTabs = () => {
 
@@ -15,7 +14,6 @@ const InterfaceTabs = () => {
 
     const handleText = (e) => {
         e.persist()
-        console.log(e)
         AppContext.dispatch({ type: 'ADD_DATA', data: e.target.value })
     }
 

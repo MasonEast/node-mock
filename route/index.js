@@ -15,7 +15,6 @@ module.exports = {
         switch (params) {
             case 'register':
                 let validate = await user.validate({ email })
-                console.log(33, validate)
                 if (validate) {
                     return response(1, '哎呀，该邮箱已被注册啦')
                 }
@@ -24,12 +23,15 @@ module.exports = {
                 return await user.selectOne({ email, password }).then(res => response(0, res)).catch(error => response(1, error.message))
             case 'addProject':
                 let validate2 = await project.validate({ name, user_id })
-                console.log(44, validate2)
                 if (validate2) {
                     return response(1, '哎呀，该项目已被注册啦')
                 }
                 return await project.add({ name, url, desc, user_id }).then(res => response(0, res)).catch(error => response(1, error.message))
             case 'addInterface':
+                let validate3 = await api.validate({ url, project_id: id })
+                if (validate3) {
+                    return response(1, '哎呀，该接口已被注册啦')
+                }
                 return await api.addApi({ project_id: id, name, url, desc, headers, method, body, data }).then(res => response(0, res)).catch(error => response(1, error.message))
             default:
                 return '接口请求出错'
@@ -67,13 +69,15 @@ module.exports = {
         let res = await api.findOneApiByUrl({ url: params[0], project_id: params.project_id, method, headers })
         let result = '接口请求错误（可能原因： url存在问题'
         if (res && res.headers !== JSON.stringify(headers)) {
-            return '接口请求错误（可能原因： headers存在问题'
+            return response(1, '接口请求错误（可能原因： headers存在问题')
         }
         if (res && res.body !== JSON.stringify(body)) {
-            return '接口请求错误（可能原因： body存在问题'
+            return response(1, '接口请求错误（可能原因： body存在问题')
         }
-        res && (result = res.data)
-        return JSON.parse(result)
+        if (!res) {
+            return response(1, result)
+        }
+        return response(0, JSON.parse(res.data))
     },
 }
 
