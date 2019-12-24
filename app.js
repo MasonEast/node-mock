@@ -29,37 +29,41 @@ const response = (res, err, ctx) => {
             data: err
         }
     }
-    return ctx.body = {
-        status: 0,
-        data: res
+    else if (!res.data) {
+        return ctx.body = {
+            status: 1,
+            data: '找不到你的信息😯'
+        }
     }
+    return ctx.body = res
 }
 
 //next页面api接口
 router.post('/api/:page', async ctx => {
     await routePost({ params: ctx.params.page, query: ctx.request.body }).then((res, err) => {
-        console.log(111, res)
+        console.log(111, res, err)
         response(res, err, ctx)
     })
 })
 
 router.get('/api/:page', async ctx => {
-    await routeGet({ params: ctx.params.page, query: ctx.request.query }).then((err, res) => {
-        response(err, res, ctx)
+    await routeGet({ params: ctx.params.page, query: ctx.request.query }).then((res, err) => {
+        console.log(222, err, res)
+        response(res, err, ctx)
     })
 })
 
 router.delete('/api/:page', async ctx => {
-    await routeDelete({ params: ctx.params.page, query: ctx.request.body }).then((err, res) => {
-        response(err, res, ctx)
+    await routeDelete({ params: ctx.params.page, query: ctx.request.body }).then((res, err) => {
+        response(res, err, ctx)
     })
 })
 
 //mock数据接口
 router.all('/mock/:project_id/*', async ctx => {
     const { method, body, url, header } = ctx.request
-    await routeMock({ params: ctx.params, body, method, url, header }).then((err, res) => {
-        response(err, res, ctx)
+    await routeMock({ params: ctx.params, body, method, url, header }).then((res, err) => {
+        response(res, err, ctx)
     })
 })
 

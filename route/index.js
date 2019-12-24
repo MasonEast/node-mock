@@ -1,15 +1,36 @@
 const api = require('../models/apis')
 const project = require('../models/projects')
-const request = require('request');
+const user = require('../models/users')
+
+const response = (status, res) => {
+    return {
+        status,
+        data: res
+    }
+}
 
 module.exports = {
     routePost: async ({ params, query }) => {
-        const { id, name, url, desc, user_id, headers, method, body, data } = query
+        const { email, password, id, name, url, desc, user_id, headers, method, body, data } = query
         switch (params) {
+            case 'register':
+                let validate = await user.validate({ email })
+                console.log(33, validate)
+                if (validate) {
+                    return response(1, '哎呀，该邮箱已被注册啦')
+                }
+                return await user.add({ email, password }).then(res => response(0, res)).catch(error => response(1, error.message))
+            case 'login':
+                return await user.selectOne({ email, password }).then(res => response(0, res)).catch(error => response(1, error.message))
             case 'addProject':
-                return await project.add({ name, url, desc, user_id }).then(res => res).catch(error => error.message)
+                let validate2 = await project.validate({ name, user_id })
+                console.log(44, validate2)
+                if (validate2) {
+                    return response(1, '哎呀，该项目已被注册啦')
+                }
+                return await project.add({ name, url, desc, user_id }).then(res => response(0, res)).catch(error => response(1, error.message))
             case 'addInterface':
-                return await api.addApi({ project_id: id, name, url, desc, headers, method, body, data }).then(res => res).catch(error => error.message)
+                return await api.addApi({ project_id: id, name, url, desc, headers, method, body, data }).then(res => response(0, res)).catch(error => response(1, error.message))
             default:
                 return '接口请求出错'
         }
@@ -18,9 +39,9 @@ module.exports = {
     routeGet: async ({ params, query }) => {
         switch (params) {
             case 'project':
-                return await project.selectAll().then(res => res).catch(error => error.message)
+                return await project.selectAll(query.user_id).then(res => response(0, res)).catch(error => response(1, error.message))
             case 'getInterface':
-                return await api.selectAllApi(query.id).then(res => res).catch(error => error.message)
+                return await api.selectAllApi(query.id).then(res => response(0, res)).catch(error => response(1, error.message))
             default:
                 return '接口请求出错'
 
@@ -32,9 +53,9 @@ module.exports = {
         switch (params) {
             case 'project':
                 await api.deleteApi(id)                     //删除项目的同时清空对应的api接口
-                return await project.deleteOne(id).then(res => res).catch(error => error.message)
+                return await project.deleteOne(id).then(res => response(0, res)).catch(error => response(1, error.message))
             case 'interface':
-                return await api.deleteOneApi(id).then(res => res).catch(error => error.message)
+                return await api.deleteOneApi(id).then(res => response(0, res)).catch(error => response(1, error.message))
             default:
                 return '接口请求出错'
         }

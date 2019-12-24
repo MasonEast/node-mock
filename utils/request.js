@@ -18,6 +18,6 @@ export const requestPost = async (params) => {
         url: params.url,
         data: Qs.stringify(params.body)
     })
-    res.data.status ? message.error('error') : message.success('success')
+    res.data.status ? message.error(res.data.data) : message.success('success')
     return res
 }

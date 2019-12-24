@@ -13,3 +13,25 @@
 .empty-item{
     width: 30%;
 }
+.home-header{
+    height: 50px
+}
+.header-box-tab-login, .header-box-tab-nologin{
+    font-size: 18px;
+    font-weight: 700;
+    float: right;
+    margin-right: 50px;
+    cursor: pointer;
+}
+
+.login-form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.nologin-text{
+    display: flex;
+    /* align-items: center;  */
+    justify-content: center; 
+}
+

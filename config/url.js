@@ -10,4 +10,6 @@ export default {
     getInterfaceURL: `${host}/api/getInterface`,
     addInterfaceURL: `${host}/api/addInterface`,
     deleteInterfaceURL: `${host}/api/interface`,
+    loginURL: `${host}/api/login`,
+    registerURL: `${host}/api/register`,
 }
