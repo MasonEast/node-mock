@@ -184,7 +184,7 @@ const HeadersTable = (props) => {
     return (
         <div>
             <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }}>
-                Add a row
+                新增一行
             </Button>
             <Table
                 components={components}

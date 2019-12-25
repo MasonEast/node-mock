@@ -179,7 +179,7 @@ const BodyTable = (props) => {
         <div>
             <header>
                 <Button onClick={handleAdd} type="primary" style={{ margin: '0 16px 16px 0' }}>
-                    Add a row
+                    新增一行
                 </Button>
                 <Radio.Group onChange={(e) => {
                     // e.persist()

@@ -133,17 +133,17 @@ function updateApi (content, condition) {
     return Api.update(content, condition)
 }
 
-Api.sync({
-    force: true     //可不传， 若为true则会删除之前的同名表，  如果为false 创建表，如果原来存在，则不创建
-}).then(function () {
-    // Table created
-    return Api.create({
-        name: 'test',
-        desc: 'test',
-        project_id: 'example',
-        url: 'xxx',
-    });
-})
+// Api.sync({
+//     force: true     //可不传， 若为true则会删除之前的同名表，  如果为false 创建表，如果原来存在，则不创建
+// }).then(function () {
+//     // Table created
+//     return Api.create({
+//         name: 'test',
+//         desc: 'test',
+//         project_id: 'example',
+//         url: 'xxx',
+//     });
+// })
 
 module.exports = {
     addApi,
